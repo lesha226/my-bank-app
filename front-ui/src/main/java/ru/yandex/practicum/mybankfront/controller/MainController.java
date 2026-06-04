@@ -1,15 +1,19 @@
 package ru.yandex.practicum.mybankfront.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import ru.yandex.practicum.mybankfront.controller.dto.CashAction;
-import ru.yandex.practicum.mybankfront.controller.stub.AccountStub;
+import ru.yandex.practicum.mybankfront.controller.dto.EditAccountRequest;
+import ru.yandex.practicum.mybankfront.controller.dto.EditCashRequest;
+import ru.yandex.practicum.mybankfront.controller.dto.MainResponse;
+import ru.yandex.practicum.mybankfront.controller.dto.TransferRequest;
+import ru.yandex.practicum.mybankfront.service.MainService;
 
-import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Контроллер main.html.
@@ -34,9 +38,12 @@ import java.time.LocalDate;
  */
 @Controller
 public class MainController {
-    // TODO: Удалить заглушку, так как используется только для ознакомительных целей
-    @Autowired
-    private AccountStub accountStub;
+
+    private final MainService mainService;
+
+    public MainController(MainService mainService) {
+        this.mainService = mainService;
+    }
 
     /**
      * GET /.
@@ -55,9 +62,12 @@ public class MainController {
      * 3. Текущего пользователя можно получить из контекста Security
      */
     @GetMapping("/account")
-    public String getAccount(Model model) {
-        // TODO: Заменить на то, что описано в комментарии к методу
-        accountStub.fillModel(model, null, null);
+    public String getAccount(Model model, @AuthenticationPrincipal OidcUser user) {
+        System.out.println("MainController.getAccount user=" + user);
+
+        MainResponse response = mainService.getAccount(user);
+
+        fillModel(model, response);
 
         return "main";
     }
@@ -76,12 +86,14 @@ public class MainController {
     @PostMapping("/account")
     public String editAccount(
             Model model,
-            @RequestParam("name") String name,
-            @RequestParam("birthdate") LocalDate birthdate
+            @AuthenticationPrincipal OidcUser user,
+            @Valid EditAccountRequest params
     ) {
-        // TODO: Заменить на то, что описано в комментарии к методу
-        accountStub.setNameAndBirthdate(name, birthdate);
-        accountStub.fillModel(model, null, null);
+        System.out.println("MainController.editAccount user=" + user + ", params=" + params);
+
+        MainResponse response = mainService.editAccount(user, params);
+
+        fillModel(model, response);
 
         return "main";
     }
@@ -100,11 +112,14 @@ public class MainController {
     @PostMapping("/cash")
     public String editCash(
             Model model,
-            @RequestParam("value") int value,
-            @RequestParam("action") CashAction action
-            ) {
-        // TODO: Заменить на то, что описано в комментарии к методу
-        accountStub.editCash(model, value, action);
+            @AuthenticationPrincipal OidcUser user,
+            @Valid EditCashRequest params
+    ) {
+        System.out.println("MainController.editCash user=" + user + ", params=" + params);
+
+        MainResponse response = mainService.editCash(user, params);
+
+        fillModel(model, response);
 
         return "main";
     }
@@ -123,12 +138,26 @@ public class MainController {
     @PostMapping("/transfer")
     public String transfer(
             Model model,
-            @RequestParam("value") int value,
-            @RequestParam("login") String login
+            @AuthenticationPrincipal OidcUser user,
+            @Valid TransferRequest params
     ) {
-        // TODO: Заменить на то, что описано в комментарии к методу
-        accountStub.transfer(model, value, login);
+        System.out.println("MainController.transfer user=" + user + ", params=" + params);
+
+        MainResponse response = mainService.transfer(user, params);
+
+        fillModel(model, response);
 
         return "main";
+    }
+
+    private void fillModel(Model model, MainResponse mainResponse) {
+
+        model.addAttribute("name", mainResponse.name());
+        model.addAttribute("birthdate", mainResponse.birthdate().format(DateTimeFormatter.ISO_DATE));
+        model.addAttribute("sum", mainResponse.sum());
+        model.addAttribute("accounts", mainResponse.accounts());
+        model.addAttribute("errors", mainResponse.errors());
+        model.addAttribute("info", mainResponse.info());
+
     }
 }
