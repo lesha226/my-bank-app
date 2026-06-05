@@ -7,13 +7,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record MainResponse(
-        @Nonnull
+        @Nullable
         String name,
 
-        @Nonnull
+        @Nullable
         LocalDate birthdate,
 
-        int sum,
+        @Nullable
+        Integer sum,
 
         @Nonnull
         List<AccountDto> accounts,

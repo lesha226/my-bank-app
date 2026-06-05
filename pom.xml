@@ -9,5 +9,6 @@
 
     <modules>
         <module>front-ui</module>
+        <module>accounts-service</module>
     </modules>
 </project>

@@ -152,8 +152,13 @@ public class MainController {
 
     private void fillModel(Model model, MainResponse mainResponse) {
 
+        String birthdate = null;
+        if (mainResponse.birthdate() != null) {
+            birthdate = mainResponse.birthdate().format(DateTimeFormatter.ISO_DATE);
+        }
+
         model.addAttribute("name", mainResponse.name());
-        model.addAttribute("birthdate", mainResponse.birthdate().format(DateTimeFormatter.ISO_DATE));
+        model.addAttribute("birthdate", birthdate);
         model.addAttribute("sum", mainResponse.sum());
         model.addAttribute("accounts", mainResponse.accounts());
         model.addAttribute("errors", mainResponse.errors());

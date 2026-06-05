@@ -1,5 +1,6 @@
 package ru.yandex.practicum.mybankfront.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,6 +13,7 @@ public record EditAccountRequest(
         String name,
 
         @NotNull(message = "Birthdate is required")
+        @JsonFormat(pattern = "yyyy-MM-dd")
         LocalDate birthdate
 ) {
 
