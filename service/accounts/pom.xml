@@ -6,13 +6,13 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.5.14</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath>../../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>ru.yandex.practicum.mybank.service</groupId>
 	<artifactId>accounts</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
+	<name>accounts-service</name>
 
 	<properties>
 		<java.version>21</java.version>

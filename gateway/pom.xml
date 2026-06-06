@@ -11,7 +11,7 @@
 	<groupId>ru.yandex.practicum.mybank</groupId>
 	<artifactId>gateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
+	<name>gateway-server</name>
 	<properties>
 		<java.version>21</java.version>
 		<spring-cloud.version>2025.0.2</spring-cloud.version>
