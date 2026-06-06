@@ -1,0 +1,12 @@
+server:
+  port: 8888 # порт, на котором будет запущен конфиг-сервер
+spring:
+  application:
+    name: spring-cloud-config-server
+  profiles:
+    active: native # Профиль native необходимо включать для поддержки хранилища в локальной файловой системе
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config-repo/ # Фолдер, из которого загружаются конфигурации

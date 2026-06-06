@@ -1,0 +1,24 @@
+bank:
+  accounts-service:
+    base-url: http://localhost:8085/api/v1
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${FRON_UI_KEYCLOAK_CLIENT_ID:front-ui}
+            client-secret: ${FRON_UI_KEYCLOAK_CLIENT_SECRET:front-ui-secret}
+            authorization-grant-type: authorization_code
+            scope: openid,profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            provider: keycloak
+        provider:
+          keycloak:
+            # issuer-uri: http://localhost:8180/realms/bank-realm
+            authorization-uri: http://localhost:8180/realms/bank-realm/protocol/openid-connect/auth
+            token-uri: ${SPRING_KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/token
+            user-info-uri: ${SPRING_KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/userinfo
+            jwk-set-uri: ${SPRING_KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
