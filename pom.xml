@@ -9,8 +9,9 @@
 
     <modules>
         <module>front-ui</module>
-        <module>accounts-service</module>
+        <module>accounts</module>
         <module>config</module>
         <module>gateway</module>
+        <module>eureka</module>
     </modules>
 </project>
