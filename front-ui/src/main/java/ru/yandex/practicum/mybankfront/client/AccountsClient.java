@@ -13,7 +13,8 @@ public class AccountsClient {
     private final String base_url;
     private final RestClient restClient;
 
-    public AccountsClient(@Value("${bank.accounts-service.base-url}") String base_url, RestClient.Builder builder) {
+    public AccountsClient(@Value("${bank.through-gateway-service.accounts.base-url}") String base_url,
+                          RestClient.Builder builder) {
         this.base_url = base_url;
 
         this.restClient = builder

@@ -18,8 +18,3 @@ spring:
                 - Path=/accounts/** # URI поступающего в Gateway запроса, с которым мэтчится роут
               filters:
                 - RewritePath=/accounts/?(?<segment>.*), /$\{segment} # Фильтр, который модифицирует запрос к целевому сервису (убирается имя сервиса в начале)
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
