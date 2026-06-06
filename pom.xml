@@ -11,5 +11,6 @@
         <module>front-ui</module>
         <module>accounts-service</module>
         <module>config</module>
+        <module>gateway</module>
     </modules>
 </project>
