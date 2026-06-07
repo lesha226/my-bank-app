@@ -1,4 +1,0 @@
-bank:
-  service:
-    accounts:
-      base-url: http://gateway/accounts/api/v1

@@ -4,16 +4,3 @@ bank:
   service:
     accounts:
       base-url: http://accounts/api/v1
-
-spring:
-  security:
-    oauth2:
-      client:
-        provider:
-          keycloak:
-            # issuer-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}
-            authorization-uri: http://localhost:8180/realms/bank-realm/protocol/openid-connect/auth
-            token-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/token
-            user-info-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/userinfo
-            jwk-set-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/certs
-            user-name-attribute: preferred_username
