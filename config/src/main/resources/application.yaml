@@ -10,3 +10,8 @@ spring:
       server:
         native:
           search-locations: classpath:/config-repo/ # Фолдер, из которого загружаются конфигурации
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}

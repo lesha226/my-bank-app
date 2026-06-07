@@ -1,0 +1,8 @@
+#logging:
+#  level:
+#    org.springframework.security: DEBUG
+#    org.springframework.web: DEBUG
+
+#keycloak:
+#  auth-server-url: http://test-mock-keycloak
+#  realm: test-realm

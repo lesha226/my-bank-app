@@ -9,7 +9,7 @@
 
     <modules>
         <module>front-ui</module>
-        <module>service/accounts</module>
+        <module>accounts</module>
         <module>config</module>
         <module>gateway</module>
         <module>eureka</module>

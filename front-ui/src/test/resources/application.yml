@@ -1,14 +1,27 @@
-bank:
-  gateway:
-    base-url: http://gateway
-  service:
-    accounts:
-      base-url: http://accounts/api/v1
-
 spring:
-  security:
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+
+eureka:
+  client:
+    enabled: false
+
+spring.security:
     oauth2:
       client:
+        registration:
+          keycloak:
+            client-id: ${FRON_UI_KEYCLOAK_CLIENT_ID:front-ui}
+            client-secret: ${FRON_UI_KEYCLOAK_CLIENT_SECRET:front-ui-secret}
+            authorization-grant-type: authorization_code
+            scope: openid,profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            provider: keycloak
         provider:
           keycloak:
             # issuer-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}

@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRunner;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import ru.yandex.practicum.mybankfront.client.AccountsClient;
+import ru.yandex.practicum.mybankfront.config.ClientTestConfig;
 import ru.yandex.practicum.mybankfront.controller.dto.EditAccountRequest;
 import ru.yandex.practicum.mybankfront.dto.AccountFullDataDto;
 
@@ -19,9 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test-contract")
 @AutoConfigureStubRunner(
-        ids = "ru.yandex.practicum.mybank.service:accounts:+:stubs:8085",
+        ids = "ru.yandex.practicum.mybank.service:accounts:0.0.1-SNAPSHOT:stubs:8085",
         stubsMode = StubRunnerProperties.StubsMode.LOCAL
 )
+@Import(ClientTestConfig.class)
 class AccountsClientContractTest {
 
     @Autowired

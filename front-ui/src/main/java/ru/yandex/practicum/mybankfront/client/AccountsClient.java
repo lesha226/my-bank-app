@@ -13,18 +13,13 @@ public class AccountsClient {
     private final String base_url;
     private final RestClient restClient;
 
-    public AccountsClient(@Value("${bank.through-gateway-service.accounts.base-url}") String base_url,
-                          RestClient.Builder builder) {
+    public AccountsClient(@Value("${bank.service.accounts.base-url}") String base_url, RestClient.Builder builder) {
         this.base_url = base_url;
-
-        this.restClient = builder
-                .baseUrl(base_url)
-                .build();
+        this.restClient = builder.baseUrl(base_url).build();
     }
 
     public AccountFullDataDto getAccount(String login) {
         System.out.println("AccountsClient.getAccount: login=" + login + ", base_url=" + base_url);
-
 
         return restClient.get()
                 .uri("/accounts/{login}", login)
@@ -33,6 +28,8 @@ public class AccountsClient {
     }
 
     public AccountFullDataDto updateAccount(String login, EditAccountRequest request) {
+        System.out.println("AccountsClient.getAccount: updateAccount=" + login + ", request=" + request + ", base_url=" + base_url);
+
         return restClient.patch()
                 .uri("/accounts/{login}", login)
                 .body(request)
