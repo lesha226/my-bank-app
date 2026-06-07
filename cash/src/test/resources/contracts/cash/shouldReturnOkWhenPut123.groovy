@@ -1,24 +1,30 @@
-package contracts.accounts
+package contracts.cash
 
 import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
-    description 'Return 404 when non-existent-user'
-    name 'shouldReturn404WhenNonExistingUser'
+    description 'Put cash to account'
+    name 'shouldReturnOkWhenPut123'
 
     request {
-        method GET()
-        url '/api/v1/accounts/non-existent-user'
+        method POST()
+        url '/api/v1/cash/test-user/action'
         headers {
             header 'Authorization', value(
                     consumer(regex('Bearer\\s+.+')),   // для консьюмера (WireMock): любой Bearer-токен
                     producer('Bearer test-token')  // для провайдера (MockMvc-тест): ровно этот токен
             )
+            contentType(applicationJson())
         }
+
+        body([
+                value: 123,
+                action: 'PUT'
+        ])
     }
 
     response {
-        status 404
+        status NO_CONTENT()
     }
 
 }

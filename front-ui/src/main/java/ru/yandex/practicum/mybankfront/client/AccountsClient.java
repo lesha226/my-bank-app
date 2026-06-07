@@ -55,7 +55,7 @@ public class AccountsClient {
     }
 
     public AccountFullDataDto updateAccount(String login, EditAccountRequest request) {
-        System.out.println("AccountsClient.getAccount: updateAccount=" + login + ", request=" + request + ", base_url=" + base_url);
+        System.out.println("AccountsClient.updateAccount: login=" + login + ", request=" + request + ", base_url=" + base_url);
 
         return webClient.patch()
                 .uri("/accounts/{login}", login)

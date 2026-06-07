@@ -11,12 +11,6 @@ public class ClientTestConfig {
 
     @Bean
     @Primary
-    public RestClient.Builder restClientBuilder() {
-        return RestClient.builder();
-    }
-
-    @Bean
-    @Primary
     public WebClient.Builder webClientBuilder() {
         return WebClient.builder();
     }

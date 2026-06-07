@@ -10,10 +10,10 @@
 	</parent>
 
 	<groupId>ru.yandex.practicum.mybank.service</groupId>
-	<artifactId>template</artifactId>
+	<artifactId>cash</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>template-service</name>
+	<name>cash-service</name>
 
 	<properties>
 		<java.version>21</java.version>
@@ -98,7 +98,7 @@
 				<version>5.0.2</version>
 				<extensions>true</extensions>
 				<configuration>
-					<baseClassForTests>ru.yandex.practicum.mybank.service.transfer.contract.BaseContractTest</baseClassForTests>
+					<baseClassForTests>ru.yandex.practicum.mybank.service.cash.contract.BaseContractTest</baseClassForTests>
 					<testFramework>JUNIT5</testFramework>
 				</configuration>
 			</plugin>

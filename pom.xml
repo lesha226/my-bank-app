@@ -13,5 +13,6 @@
         <module>config</module>
         <module>gateway</module>
         <module>eureka</module>
+        <module>cash</module>
     </modules>
 </project>

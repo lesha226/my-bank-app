@@ -12,6 +12,10 @@ Contract.make {
         method PATCH()
         url '/api/v1/accounts/test-user'
         headers {
+            header 'Authorization', value(
+                    consumer(regex('Bearer\\s+.+')),   // для консьюмера (WireMock): любой Bearer-токен
+                    producer('Bearer test-token')  // для провайдера (MockMvc-тест): ровно этот токен
+            )
             contentType(applicationJson())
         }
         body([

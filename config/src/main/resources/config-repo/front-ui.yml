@@ -3,6 +3,8 @@ bank:
     accounts:
       base-url: http://gateway/accounts/api/v1
       #base-url: http://localhost:8085/api/v1
+    cash:
+      base-url: http://cash/api/v1
 
 spring:
   security:

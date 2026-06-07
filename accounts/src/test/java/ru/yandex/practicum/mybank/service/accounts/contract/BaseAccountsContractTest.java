@@ -5,11 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.mybank.service.accounts.config.JwtTestConfig;
 import ru.yandex.practicum.mybank.service.accounts.dto.AccountFullDataDto;
 import ru.yandex.practicum.mybank.service.accounts.dto.AccountDto;
 import ru.yandex.practicum.mybank.service.accounts.service.AccountsService;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("contract-test")
+@Import(JwtTestConfig.class)
 public class BaseAccountsContractTest {
 
     @Autowired

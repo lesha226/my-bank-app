@@ -2,7 +2,8 @@ bank:
   service:
     accounts:
       base-url: http://accounts/api/v1
-
+    cash:
+      base-url: http://cash/api/v1
 #logging:
 #  level:
 #    org.springframework.security: DEBUG
