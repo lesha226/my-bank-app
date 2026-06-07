@@ -4,6 +4,9 @@ bank:
       base-url: http://accounts/api/v1
     cash:
       base-url: http://cash/api/v1
+    transfer:
+      base-url: http://transfer/api/v1
+
 #logging:
 #  level:
 #    org.springframework.security: DEBUG

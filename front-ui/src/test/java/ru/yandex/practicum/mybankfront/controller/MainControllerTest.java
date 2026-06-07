@@ -121,12 +121,12 @@ class MainControllerTest {
     @Test
     @WithUserDetails(value = TEST_USER_USERNAME)
     void transfer() throws Exception {
-        TransferRequest params = new TransferRequest(100, "login");
+        TransferRequest params = new TransferRequest(100, "user2");
         when(mainService.transfer(any(), eq(params))).thenReturn(mainResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/transfer")
                         .param("value", "100")
-                        .param("login", "login")
+                        .param("recipient", "user2")
                 )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.model().attribute("name", mainResponse.name()))

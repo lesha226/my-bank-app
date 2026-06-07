@@ -14,5 +14,6 @@
         <module>gateway</module>
         <module>eureka</module>
         <module>cash</module>
+        <module>transfer</module>
     </modules>
 </project>

@@ -5,6 +5,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.mybankfront.client.AccountsClient;
 import ru.yandex.practicum.mybankfront.client.CashClient;
+import ru.yandex.practicum.mybankfront.client.TransferClient;
 import ru.yandex.practicum.mybankfront.controller.dto.AccountDto;
 import ru.yandex.practicum.mybankfront.controller.dto.EditAccountRequest;
 import ru.yandex.practicum.mybankfront.controller.dto.EditCashRequest;
@@ -20,10 +21,12 @@ public class MainService {
 
     private final AccountsClient accountsClient;
     private final CashClient cashClient;
+    private final TransferClient transferClient;
 
-    public MainService(AccountsClient accountsClient, CashClient cashClient) {
+    public MainService(AccountsClient accountsClient, CashClient cashClient, TransferClient transferClient) {
         this.accountsClient = accountsClient;
         this.cashClient = cashClient;
+        this.transferClient = transferClient;
     }
 
     public @Nonnull MainResponse getAccount(OidcUser user) {
@@ -92,7 +95,13 @@ public class MainService {
         List<String> errors = List.of();
         String info = null;
 
-        // TODO : выполнить действие
+        try {
+            transferClient.transfer(user.getPreferredUsername(), params);
+
+            info = "Done.";
+        } catch (Exception e) {
+            return toMainResponse(List.of(e.getMessage()));
+        }
 
         try {
             AccountFullDataDto account = accountsClient.getAccount(user.getPreferredUsername());

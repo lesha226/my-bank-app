@@ -1,12 +1,12 @@
-package ru.yandex.practicum.mybank.gateway;
+package ru.yandex.practicum.mybank.service.transfer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GatewayApplicationTests {
+class TransferApplicationTests {
 
-	//@Test
+	@Test
 	void contextLoads() {
 	}
 
