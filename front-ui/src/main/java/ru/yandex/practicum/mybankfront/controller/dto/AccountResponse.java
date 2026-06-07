@@ -6,12 +6,12 @@ import jakarta.annotation.Nullable;
 import java.time.LocalDate;
 import java.util.List;
 
-public record MainResponse(
+public record AccountResponse(
         @Nullable
         String name,
 
         @Nullable
-        LocalDate birthdate,
+        String birthdate,
 
         @Nullable
         Integer sum,

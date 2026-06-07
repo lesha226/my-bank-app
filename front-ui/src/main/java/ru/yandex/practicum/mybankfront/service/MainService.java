@@ -6,14 +6,11 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.mybankfront.client.AccountsClient;
 import ru.yandex.practicum.mybankfront.client.CashClient;
 import ru.yandex.practicum.mybankfront.client.TransferClient;
-import ru.yandex.practicum.mybankfront.controller.dto.AccountDto;
-import ru.yandex.practicum.mybankfront.controller.dto.EditAccountRequest;
-import ru.yandex.practicum.mybankfront.controller.dto.EditCashRequest;
-import ru.yandex.practicum.mybankfront.controller.dto.MainResponse;
-import ru.yandex.practicum.mybankfront.controller.dto.TransferRequest;
+import ru.yandex.practicum.mybankfront.controller.dto.*;
 import ru.yandex.practicum.mybankfront.dto.AccountFullDataDto;
 
-import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,94 +26,87 @@ public class MainService {
         this.transferClient = transferClient;
     }
 
-    public @Nonnull MainResponse getAccount(OidcUser user) {
-        System.out.println("MainService.getAccount user=" + user);
-
-        if (user == null) {
+    public @Nonnull AccountResponse getAccount(OidcUser user, ExecutionStatusResponse lastResult) {
+        if (user == null || lastResult == null) {
             throw new IllegalArgumentException();
         }
+        System.out.println("MainService.getAccount user=" + user.getName());
 
         try {
-            AccountFullDataDto account = accountsClient.getAccount(user.getPreferredUsername());
-            return toMainResponse(account, List.of(), null);
+            AccountFullDataDto account = accountsClient.getAccount(user.getName());
+            return toAccountResponse(account, lastResult);
         } catch (Exception e) {
-            return toMainResponse(List.of(e.getMessage()));
+            return toAccountResponse(e.getMessage(), lastResult);
         }
     }
 
-    public @Nonnull MainResponse editAccount(OidcUser user, EditAccountRequest params) {
-        System.out.println("MainService.editAccount user=" + user + ", params=" + params);
-
+    public @Nonnull ExecutionStatusResponse editAccount(OidcUser user, EditAccountRequest params) {
         if (user == null || params == null ) {
             throw new IllegalArgumentException();
         }
+        System.out.println("MainService.editAccount user=" + user.getName() + ", params=" + params);
 
         try {
-            AccountFullDataDto account = accountsClient.updateAccount(user.getPreferredUsername(), params);
-            return toMainResponse(account, List.of(), "Saved");
+            AccountFullDataDto account = accountsClient.updateAccount(user.getName(), params);
+            return doCompleteResult();
         } catch (Exception e) {
-            return toMainResponse(List.of(e.getMessage()));
+            return doErrorResult(e.getMessage());
         }
     }
 
-    public @Nonnull MainResponse editCash(OidcUser user, EditCashRequest params) {
-        System.out.println("MainService.editCash user=" + user + ", params=" + params);
-
+    public @Nonnull ExecutionStatusResponse editCash(OidcUser user, EditCashRequest params) {
         if (user == null || params == null) {
             throw new IllegalArgumentException();
         }
-
-        List<String> errors = List.of();
-        String info = null;
+        System.out.println("MainService.editCash user=" + user.getName() + ", params=" + params);
 
         try {
-            cashClient.action(user.getPreferredUsername(), params);
+            cashClient.action(user.getName(), params);
 
-            info = "Done.";
+            return doCompleteResult();
         } catch (Exception e) {
-            return toMainResponse(List.of(e.getMessage()));
-        }
-
-        try {
-            AccountFullDataDto account = accountsClient.getAccount(user.getPreferredUsername());
-            return toMainResponse(account, errors, info);
-        } catch (Exception e) {
-            return toMainResponse(List.of(e.getMessage()));
+            return doErrorResult(e.getMessage());
         }
     }
 
-    public @Nonnull MainResponse transfer(OidcUser user, TransferRequest params) {
-        System.out.println("MainService.transfer user=" + user + ", params=" + params);
-
+    public @Nonnull ExecutionStatusResponse transfer(OidcUser user, TransferRequest params) {
         if (user == null || params == null) {
             throw new IllegalArgumentException();
         }
-
-        List<String> errors = List.of();
-        String info = null;
+        System.out.println("MainService.transfer user=" + user.getName() + ", params=" + params);
 
         try {
-            transferClient.transfer(user.getPreferredUsername(), params);
+            transferClient.transfer(user.getName(), params);
 
-            info = "Done.";
+            return doCompleteResult();
         } catch (Exception e) {
-            return toMainResponse(List.of(e.getMessage()));
-        }
-
-        try {
-            AccountFullDataDto account = accountsClient.getAccount(user.getPreferredUsername());
-            return toMainResponse(account, errors, info);
-        } catch (Exception e) {
-            return toMainResponse(List.of(e.getMessage()));
+            return doErrorResult(e.getMessage());
         }
     }
 
-    private MainResponse toMainResponse(List<String> errors) {
-        return new MainResponse(null, null, null, List.of(), errors, null);
+    private ExecutionStatusResponse doErrorResult(String message) {
+        return new ExecutionStatusResponse(List.of(message), null);
     }
 
-    private MainResponse toMainResponse(AccountFullDataDto account, List<String> errors, String info) {
-        return new MainResponse(account.name(), account.birthdate(), account.balanceAmount(), account.contacts()
-                , errors, info);
+    private ExecutionStatusResponse doCompleteResult() {
+        return new ExecutionStatusResponse(List.of(), "Done!");
+    }
+
+    private AccountResponse toAccountResponse(@Nonnull String errorMessage, @Nonnull ExecutionStatusResponse lastResult) {
+        List<String> errors = new ArrayList<>(lastResult.errors());
+        errors.add(errorMessage);
+
+        return new AccountResponse(null, null, null, List.of(), errors, lastResult.info());
+    }
+
+    private AccountResponse toAccountResponse(@Nonnull AccountFullDataDto account, @Nonnull ExecutionStatusResponse lastResult) {
+
+        String birthdate = null;
+        if (account.birthdate() != null) {
+            birthdate = account.birthdate().format(DateTimeFormatter.ISO_DATE);
+        }
+
+        return new AccountResponse(account.name(), birthdate, account.balanceAmount(), account.contacts()
+                , lastResult.errors(), lastResult.info());
     }
 }

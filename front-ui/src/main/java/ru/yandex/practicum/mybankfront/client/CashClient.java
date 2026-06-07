@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.yandex.practicum.mybankfront.controller.dto.EditCashRequest;
-import ru.yandex.practicum.mybankfront.dto.AccountFullDataDto;
 
 @Component
 public class CashClient {

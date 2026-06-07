@@ -1,5 +1,6 @@
 package ru.yandex.practicum.mybankfront.controller;
 
+import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -7,13 +8,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.yandex.practicum.mybankfront.controller.dto.EditAccountRequest;
-import ru.yandex.practicum.mybankfront.controller.dto.EditCashRequest;
-import ru.yandex.practicum.mybankfront.controller.dto.MainResponse;
-import ru.yandex.practicum.mybankfront.controller.dto.TransferRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.yandex.practicum.mybankfront.controller.dto.*;
 import ru.yandex.practicum.mybankfront.service.MainService;
 
-import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Контроллер main.html.
@@ -62,13 +62,22 @@ public class MainController {
      * 3. Текущего пользователя можно получить из контекста Security
      */
     @GetMapping("/account")
-    public String getAccount(Model model, @AuthenticationPrincipal OidcUser user) {
+    public String getAccount(
+            Model model,
+            @AuthenticationPrincipal OidcUser user
+    ) {
         System.out.println("MainController.getAccount user=" + user);
 
-        MainResponse response = mainService.getAccount(user);
+        ExecutionStatusResponse lastResult = getLastResult(model);
 
-        fillModel(model, response);
+        AccountResponse response = mainService.getAccount(user, lastResult);
 
+        model.addAttribute("name", response.name());
+        model.addAttribute("birthdate", response.birthdate());
+        model.addAttribute("sum", response.sum());
+        model.addAttribute("accounts", response.accounts());
+        model.addAttribute("errors", response.errors());
+        model.addAttribute("info", response.info());
         return "main";
     }
 
@@ -85,17 +94,17 @@ public class MainController {
      */
     @PostMapping("/account")
     public String editAccount(
-            Model model,
+            RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal OidcUser user,
             @Valid EditAccountRequest params
     ) {
         System.out.println("MainController.editAccount user=" + user + ", params=" + params);
 
-        MainResponse response = mainService.editAccount(user, params);
+        ExecutionStatusResponse response = mainService.editAccount(user, params);
 
-        fillModel(model, response);
-
-        return "main";
+        redirectAttributes.addFlashAttribute("errors", response.errors());
+        redirectAttributes.addFlashAttribute("info", response.info());
+        return "redirect:/account";
     }
 
     /**
@@ -111,17 +120,17 @@ public class MainController {
      */
     @PostMapping("/cash")
     public String editCash(
-            Model model,
+            RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal OidcUser user,
             @Valid EditCashRequest params
     ) {
         System.out.println("MainController.editCash user=" + user + ", params=" + params);
 
-        MainResponse response = mainService.editCash(user, params);
+        ExecutionStatusResponse response = mainService.editCash(user, params);
 
-        fillModel(model, response);
-
-        return "main";
+        redirectAttributes.addFlashAttribute("errors", response.errors());
+        redirectAttributes.addFlashAttribute("info", response.info());
+        return "redirect:/account";
     }
 
     /**
@@ -137,32 +146,26 @@ public class MainController {
      */
     @PostMapping("/transfer")
     public String transfer(
-            Model model,
+            RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal OidcUser user,
             @Valid TransferRequest params
     ) {
         System.out.println("MainController.transfer user=" + user + ", params=" + params);
 
-        MainResponse response = mainService.transfer(user, params);
+        ExecutionStatusResponse response = mainService.transfer(user, params);
 
-        fillModel(model, response);
-
-        return "main";
+        redirectAttributes.addFlashAttribute("errors", response.errors());
+        redirectAttributes.addFlashAttribute("info", response.info());
+        return "redirect:/account";
     }
 
-    private void fillModel(Model model, MainResponse mainResponse) {
+    private @Nonnull ExecutionStatusResponse getLastResult(Model model) {
 
-        String birthdate = null;
-        if (mainResponse.birthdate() != null) {
-            birthdate = mainResponse.birthdate().format(DateTimeFormatter.ISO_DATE);
-        }
+        Object raw = model.getAttribute("errors");
+        List<String> lastErrors = (raw instanceof List) ? (List<String>) raw : Collections.emptyList();
 
-        model.addAttribute("name", mainResponse.name());
-        model.addAttribute("birthdate", birthdate);
-        model.addAttribute("sum", mainResponse.sum());
-        model.addAttribute("accounts", mainResponse.accounts());
-        model.addAttribute("errors", mainResponse.errors());
-        model.addAttribute("info", mainResponse.info());
+        String lastInfo = (String) model.getAttribute("info");
 
+        return new ExecutionStatusResponse(lastErrors, lastInfo);
     }
 }

@@ -9,7 +9,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.yandex.practicum.mybankfront.config.SecurityTestConfig;
 import ru.yandex.practicum.mybankfront.controller.dto.*;
 import ru.yandex.practicum.mybankfront.service.MainService;
@@ -18,12 +17,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.yandex.practicum.mybankfront.config.SecurityTestConfig.TEST_USER_USERNAME;
 
 @WebMvcTest(MainController.class)
@@ -37,35 +35,33 @@ class MainControllerTest {
     @MockitoBean
     MainService mainService;
 
-    private final static MainResponse mainResponse = new MainResponse(
-            "Иванов Иван",
-            LocalDate.of(2001, 1, 1),
-            100,
-            List.of(
+    private final static List<AccountDto> accounts = List.of(
             new AccountDto("petrov", "Петров Петр"),
-                    new AccountDto("sidorov", "Сидоров Сидор")
-            ),
-            List.of("error"), "info"
-    );
+            new AccountDto("sidorov", "Сидоров Сидор"));
+    private final static AccountResponse ACCOUNT_RESPONSE = new AccountResponse(
+            "Иванов Иван","2001-1-1", 123, accounts, List.of("error"), "info");
+    private final static ExecutionStatusResponse EXECUTION_RESULT = new ExecutionStatusResponse(List.of("error"), "info");
 
     @Test
     @WithUserDetails(value = TEST_USER_USERNAME)
     void getAccount_validUser_returnOk() throws Exception {
-        when(mainService.getAccount(any())).thenReturn(mainResponse);
+        when(mainService.getAccount(any(), eq(EXECUTION_RESULT))).thenReturn(ACCOUNT_RESPONSE);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/account")
-                        /*.with(SecurityMockMvcRequestPostProcessors.oauth2Login()
+                                .flashAttr("errors", EXECUTION_RESULT.errors())
+                                .flashAttr("info", EXECUTION_RESULT.info())
+                                /*.with(SecurityMockMvcRequestPostProcessors.oauth2Login()
                                 .authorities(new SimpleGrantedAuthority("ROLE_USER")))*/
                 )
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.model().attribute("name", mainResponse.name()))
-                .andExpect(MockMvcResultMatchers.model().attribute("birthdate", mainResponse.birthdate().format(DateTimeFormatter.ISO_DATE)))
-                .andExpect(MockMvcResultMatchers.model().attribute("sum", mainResponse.sum()))
-                .andExpect(MockMvcResultMatchers.model().attribute("accounts", mainResponse.accounts()))
-                .andExpect(MockMvcResultMatchers.model().attribute("errors", mainResponse.errors()))
-                .andExpect(MockMvcResultMatchers.model().attribute("info", mainResponse.info()));
+                .andExpect(model().attribute("name", ACCOUNT_RESPONSE.name()))
+                .andExpect(model().attribute("birthdate", ACCOUNT_RESPONSE.birthdate()))
+                .andExpect(model().attribute("sum", ACCOUNT_RESPONSE.sum()))
+                .andExpect(model().attribute("accounts", ACCOUNT_RESPONSE.accounts()))
+                .andExpect(model().attribute("errors", ACCOUNT_RESPONSE.errors()))
+                .andExpect(model().attribute("info", ACCOUNT_RESPONSE.info()));
 
-        verify(mainService).getAccount(any());
+        verify(mainService).getAccount(any(), eq(EXECUTION_RESULT));
     }
 
     @Test
@@ -76,23 +72,20 @@ class MainControllerTest {
 
     @Test
     @WithUserDetails(value = TEST_USER_USERNAME)
-    void editAccount_returnOk() throws Exception {
+    void testEditAccount() throws Exception {
         String newName = "editedName";
         LocalDate newBirthdate = LocalDate.ofYearDay(1999,1);
         EditAccountRequest editAccountRequest = new EditAccountRequest(newName, newBirthdate);
-        when(mainService.editAccount(any(), eq(editAccountRequest))).thenReturn(mainResponse);
+        when(mainService.editAccount(any(), eq(editAccountRequest))).thenReturn(EXECUTION_RESULT);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/account")
                         .param("name", newName)
                         .param("birthdate", newBirthdate.format(DateTimeFormatter.ISO_DATE))
                 )
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.model().attribute("name", mainResponse.name()))
-                .andExpect(MockMvcResultMatchers.model().attribute("birthdate", mainResponse.birthdate().format(DateTimeFormatter.ISO_DATE)))
-                .andExpect(MockMvcResultMatchers.model().attribute("sum", mainResponse.sum()))
-                .andExpect(MockMvcResultMatchers.model().attribute("accounts", mainResponse.accounts()))
-                .andExpect(MockMvcResultMatchers.model().attribute("errors", mainResponse.errors()))
-                .andExpect(MockMvcResultMatchers.model().attribute("info", mainResponse.info()));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/account"))
+                .andExpect(flash().attribute("errors", EXECUTION_RESULT.errors()))
+                .andExpect(flash().attribute("info", EXECUTION_RESULT.info()));
 
         verify(mainService).editAccount(any(), eq(editAccountRequest));
     }
@@ -101,19 +94,16 @@ class MainControllerTest {
     @WithUserDetails(value = TEST_USER_USERNAME)
     void editCash_returnOk() throws Exception {
         EditCashRequest params = new EditCashRequest(100, CashAction.GET);
-        when(mainService.editCash(any(), eq(params))).thenReturn(mainResponse);
+        when(mainService.editCash(any(), eq(params))).thenReturn(EXECUTION_RESULT);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/cash")
                         .param("value", "100")
                         .param("action", "GET")
                 )
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.model().attribute("name", mainResponse.name()))
-                .andExpect(MockMvcResultMatchers.model().attribute("birthdate", mainResponse.birthdate().format(DateTimeFormatter.ISO_DATE)))
-                .andExpect(MockMvcResultMatchers.model().attribute("sum", mainResponse.sum()))
-                .andExpect(MockMvcResultMatchers.model().attribute("accounts", mainResponse.accounts()))
-                .andExpect(MockMvcResultMatchers.model().attribute("errors", mainResponse.errors()))
-                .andExpect(MockMvcResultMatchers.model().attribute("info", mainResponse.info()));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/account"))
+                .andExpect(flash().attribute("errors", EXECUTION_RESULT.errors()))
+                .andExpect(flash().attribute("info", EXECUTION_RESULT.info()));
 
         verify(mainService).editCash(any(), eq(params));
     }
@@ -122,19 +112,16 @@ class MainControllerTest {
     @WithUserDetails(value = TEST_USER_USERNAME)
     void transfer() throws Exception {
         TransferRequest params = new TransferRequest(100, "user2");
-        when(mainService.transfer(any(), eq(params))).thenReturn(mainResponse);
+        when(mainService.transfer(any(), eq(params))).thenReturn(EXECUTION_RESULT);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/transfer")
                         .param("value", "100")
                         .param("recipient", "user2")
                 )
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.model().attribute("name", mainResponse.name()))
-                .andExpect(MockMvcResultMatchers.model().attribute("birthdate", mainResponse.birthdate().format(DateTimeFormatter.ISO_DATE)))
-                .andExpect(MockMvcResultMatchers.model().attribute("sum", mainResponse.sum()))
-                .andExpect(MockMvcResultMatchers.model().attribute("accounts", mainResponse.accounts()))
-                .andExpect(MockMvcResultMatchers.model().attribute("errors", mainResponse.errors()))
-                .andExpect(MockMvcResultMatchers.model().attribute("info", mainResponse.info()));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/account"))
+                .andExpect(flash().attribute("errors", EXECUTION_RESULT.errors()))
+                .andExpect(flash().attribute("info", EXECUTION_RESULT.info()));
 
         verify(mainService).transfer(any(), eq(params));
     }
