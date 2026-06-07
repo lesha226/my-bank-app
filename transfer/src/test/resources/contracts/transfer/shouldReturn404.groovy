@@ -10,10 +10,10 @@ Contract.make {
         method POST()
         url '/api/v1/transfer/non-existent-user'
         headers {
-            /*header 'Authorization', value(
+            header 'Authorization', value(
                     consumer(regex('Bearer\\s+.+')),   // для консьюмера (WireMock): любой Bearer-токен
                     producer('Bearer test-token')  // для провайдера (MockMvc-тест): ровно этот токен
-            )*/
+            )
             contentType(applicationJson())
         }
         body([

@@ -19,8 +19,7 @@ import ru.yandex.practicum.mybankfront.controller.dto.EditCashRequest;
         ids = "ru.yandex.practicum.mybank.service:cash:+:stubs:8086",
         stubsMode = StubRunnerProperties.StubsMode.LOCAL
 )
-//@Import(ClientTestConfig.class)
-@Disabled
+@Import(ClientTestConfig.class)
 public class CashClientContractTest {
 
     @Autowired
