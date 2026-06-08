@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -14,6 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
@@ -23,6 +25,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/test").permitAll() // TODO : delete !!!
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->
@@ -59,6 +62,8 @@ public class SecurityConfig {
                 .filter(Objects::nonNull)
                 .map(Object::toString)
                 .toList();
+
+        System.out.println("SecurityConfig.extractRealmRoles: roles=" + roles);
 
         // Добавляем "ROLE_<имя роли>" для @PreAuthorize("hasRole('...')")
         List<GrantedAuthority> authorities = roles.stream()
