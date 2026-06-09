@@ -1,5 +1,9 @@
 package ru.yandex.practicum.mybank.service.accounts.repository;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.jdbc.repository.query.Modifying;
+import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import ru.yandex.practicum.mybank.service.accounts.model.Account;
 
@@ -12,4 +16,15 @@ public interface AccountsRepository extends CrudRepository<Account, Long> {
 
     List<Account> findAllByLoginNot(String login);
 
+    //@Modifying
+    @Query("update accounts set balance_amount = balance_amount + :amount where id = :id")
+    int deposit(Long id, int amount);
+
+
+    @Query("update accounts set balance_amount = balance_amount + :amount where id = :id")
+    void deposit1(Long id, int amount);
+
+    @Modifying
+    @Query("update accounts a set balance_amount = a.balance_amount - :amount where a.id = :id and a.balance_amount >= :amount")
+    long withdraw(Long id, int amount);
 }

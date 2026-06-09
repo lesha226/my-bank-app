@@ -3,6 +3,8 @@ package ru.yandex.practicum.mybankfront.client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import ru.yandex.practicum.mybankfront.client.dto.TransferClientRequest;
+import ru.yandex.practicum.mybankfront.client.dto.TransferClientResponse;
 import ru.yandex.practicum.mybankfront.controller.dto.TransferRequest;
 
 @Component
@@ -19,14 +21,16 @@ public class TransferClient {
         this.webClient = webClientBuilder.baseUrl(base_url).build();
     }
 
-    public void transfer(String login, TransferRequest request) {
+    public TransferClientResponse transfer(String login, TransferRequest request) {
         System.out.println("TransferClient.transfer: login=" + login + ", request=" + request + ", base_url=" + base_url);
 
-        webClient.post()
+        TransferClientRequest transferClientRequest = new TransferClientRequest(request.recipient(), request.value());
+
+        return webClient.post()
                 .uri("/transfer/{login}", login)
-                .bodyValue(request)
+                .bodyValue(transferClientRequest)
                 .retrieve()
-                .bodyToMono(Void.class)
+                .bodyToMono(TransferClientResponse.class)
                 .block();
     }
 }

@@ -51,6 +51,9 @@ public class AccountsController {
     }
 
     private String getJwtInfo(Jwt jwt) {
+        if (jwt == null) {
+            return "null";
+        }
         StringBuilder info = new StringBuilder();
         //info.append("getHeaders=" + jwt.getHeaders() + ", ");
         //info.append("getAudience=" + jwt.getAudience() + ", ");

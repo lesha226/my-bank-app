@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.practicum.mybankfront.client.AccountsClient;
 import ru.yandex.practicum.mybankfront.client.CashClient;
 import ru.yandex.practicum.mybankfront.client.TransferClient;
+import ru.yandex.practicum.mybankfront.client.dto.TransferClientResponse;
 import ru.yandex.practicum.mybankfront.controller.dto.*;
 import ru.yandex.practicum.mybankfront.dto.AccountFullDataDto;
 
@@ -144,6 +145,7 @@ class MainServiceTest {
     @Test
     void transferReturnInfo() {
         TransferRequest request = new TransferRequest(123, "login1");
+        when(transferClient.transfer(TEST_USER_USERNAME, request)).thenReturn(new TransferClientResponse("message"));
 
         ExecutionStatusResponse response = mainService.transfer(TEST_USER, request);
 

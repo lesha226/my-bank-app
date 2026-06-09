@@ -1,0 +1,29 @@
+bank:
+  service:
+    accounts:
+      #base-url: http://accounts/api/v1
+      base-url: http://localhost:8085/api/v1
+    cash:
+      #base-url: http://cash/api/v1
+      base-url: http://localhost:8086/api/v1
+    transfer:
+      #base-url: http://transfer/api/v1
+      base-url: http://localhost:8087/api/v1
+
+spring:
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          enabled: false
+      client:
+        enabled: false
+
+eureka:
+  client:
+    enabled: false

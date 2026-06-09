@@ -3,8 +3,7 @@ package contracts.transfer
 import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
-    description 'Transfer from test-user account to other account'
-    name 'shouldReturnOk'
+    description 'Transfer from test-user to other account'
 
     request {
         method POST()
@@ -18,13 +17,19 @@ Contract.make {
         }
 
         body([
-                value: 123,
-                recipient: 'test-user2'
+                toLogin: 'test-user2',
+                amount: 10
         ])
     }
 
     response {
-        status NO_CONTENT()
+        status OK()
+        headers {
+            contentType(applicationJson())
+        }
+        body(
+                info: 'message'
+        )
     }
 
 }

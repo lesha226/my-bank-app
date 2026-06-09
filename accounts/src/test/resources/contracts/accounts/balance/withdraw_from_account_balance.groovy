@@ -1,14 +1,13 @@
-package contracts.transfer
+package contracts.accounts.balance
 
 import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
-    description 'Return 404 when transfer from non-existent-user'
-    name 'shouldReturn404'
+    description 'Withdraw from account balance'
 
     request {
         method POST()
-        url '/api/v1/transfer/non-existent-user'
+        url '/api/v1/balance/withdraw'
         headers {
             header 'Authorization', value(
                     consumer(regex('Bearer\\s+.+')),   // для консьюмера (WireMock): любой Bearer-токен
@@ -17,13 +16,19 @@ Contract.make {
             contentType(applicationJson())
         }
         body([
-                value: 123,
-                recipient: 'test-user2'
+                fromLogin: 'test-user',
+                amount: 10
         ])
     }
 
     response {
-        status 404
+        status OK()
+        headers {
+            contentType(applicationJson())
+        }
+        body(
+                info: 'Снятие выполнено: 10 со счёта test-user'
+        )
     }
 
 }

@@ -4,7 +4,7 @@ create table if not exists "accounts" (
     "full_name"       varchar         not null,
     "birthdate"       date            not null,
     -- account_balances
-    "balance_amount"  bigint          not null,
+    "balance_amount"  int             not null,
     --
     constraint pk_items primary key ("id"),
     constraint uk_items unique ("login")

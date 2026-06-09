@@ -17,18 +17,6 @@ public class AccountsService {
     private final AccountsRepository accountsRepository;
     private final AccountMapper mapper = AccountMapper.ACCOUNT_MAPPER;
 
-    // TODO : удалить заглушку
-    private final static AccountFullDataDto ACCOUNT_RESPONSE = new AccountFullDataDto(
-            "test-user",
-            "Test user",
-            LocalDate.of(2001, 1, 1),
-            123,
-            List.of(
-                    new AccountDto("test-user1", "Test user1"),
-                    new AccountDto("test-user2", "Test user2")
-            )
-    );
-
     public AccountsService(AccountsRepository accountsRepository) {
         this.accountsRepository = accountsRepository;
     }

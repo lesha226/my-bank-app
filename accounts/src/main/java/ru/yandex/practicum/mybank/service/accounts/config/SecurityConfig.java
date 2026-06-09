@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/test").permitAll() // TODO : delete !!!
+                        .requestMatchers("/api/v1/balance").permitAll() // TODO : delete !!!
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->

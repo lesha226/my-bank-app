@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.mybankfront.client.AccountsClient;
 import ru.yandex.practicum.mybankfront.client.CashClient;
 import ru.yandex.practicum.mybankfront.client.TransferClient;
+import ru.yandex.practicum.mybankfront.client.dto.TransferClientResponse;
 import ru.yandex.practicum.mybankfront.controller.dto.*;
 import ru.yandex.practicum.mybankfront.dto.AccountFullDataDto;
 
@@ -25,6 +26,8 @@ public class MainService {
         this.cashClient = cashClient;
         this.transferClient = transferClient;
     }
+
+    private final static List<String> noErrors = List.of();
 
     public @Nonnull AccountResponse getAccount(OidcUser user, ExecutionStatusResponse lastResult) {
         if (user == null || lastResult == null) {
@@ -76,9 +79,9 @@ public class MainService {
         System.out.println("MainService.transfer user=" + user.getName() + ", params=" + params);
 
         try {
-            transferClient.transfer(user.getName(), params);
+            TransferClientResponse response = transferClient.transfer(user.getName(), params);
 
-            return doCompleteResult();
+            return new ExecutionStatusResponse(noErrors, response.info());
         } catch (Exception e) {
             return doErrorResult(e.getMessage());
         }
@@ -89,7 +92,7 @@ public class MainService {
     }
 
     private ExecutionStatusResponse doCompleteResult() {
-        return new ExecutionStatusResponse(List.of(), "Done!");
+        return new ExecutionStatusResponse(noErrors, "Done!");
     }
 
     private AccountResponse toAccountResponse(@Nonnull String errorMessage, @Nonnull ExecutionStatusResponse lastResult) {

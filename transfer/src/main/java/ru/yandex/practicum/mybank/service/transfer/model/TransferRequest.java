@@ -1,16 +1,15 @@
-package ru.yandex.practicum.mybank.service.transfer.dto;
+package ru.yandex.practicum.mybank.service.transfer.model;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.web.bind.annotation.RequestParam;
 
 public record TransferRequest(
+        @NotBlank(message = "Login is required")
+        String toLogin,
+
         @NotNull
         @Min(value = 0, message = "Value must be greater than 0")
-        int value,
-
-        @NotBlank(message = "Login is required")
-        String recipient
+        int amount
 ) {
 }

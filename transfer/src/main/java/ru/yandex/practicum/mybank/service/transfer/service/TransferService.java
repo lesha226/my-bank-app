@@ -1,14 +1,34 @@
 package ru.yandex.practicum.mybank.service.transfer.service;
 
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.mybank.service.transfer.dto.TransferRequest;
+import ru.yandex.practicum.mybank.service.transfer.client.AccountsClient;
+import ru.yandex.practicum.mybank.service.transfer.client.dto.AccountsTransferRequest;
+import ru.yandex.practicum.mybank.service.transfer.model.TransferResponse;
+import ru.yandex.practicum.mybank.service.transfer.model.TransferRequest;
 
 @Service
 public class TransferService {
 
-    public void transfer(String login, TransferRequest params, Jwt jwt) {
-        System.out.println("TransferService.transfer login=" + login + ", params=" + params  + ", jwt=" + jwt);
+    private final AccountsClient accountsClient;
+
+    public TransferService(AccountsClient accountsClient) {
+        this.accountsClient = accountsClient;
+    }
+
+    public TransferResponse transfer(String login, TransferRequest request) {
+        System.out.println("TransferService.transfer login=" + login + ", request=" + request);
+        if (login == null || Strings.isBlank(login) || request == null || Strings.isBlank(request.toLogin())) {
+            throw new IllegalArgumentException();
+        }
+
+        AccountsTransferRequest AccountsTransferRequest = new AccountsTransferRequest(
+                login, request.toLogin(), request.amount());
+
+        TransferResponse response = accountsClient.transfer(AccountsTransferRequest);
+
+        System.out.println("TransferService.transfer request=" + request);
+        return response;
     }
 
 }
