@@ -3,6 +3,7 @@ package ru.yandex.practicum.mybank.service.cash.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,6 +31,17 @@ public class SecurityConfig {
                 )
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpStatus.FORBIDDEN.value());
+                            response.setContentType("text/plain;charset=UTF-8");
+                            response.getWriter().write(
+                                    accessDeniedException.getMessage() != null
+                                            ? accessDeniedException.getMessage()
+                                            : "Доступ запрещён"
+                            );
+                        })
                 )
                 .build();
     }
@@ -68,8 +80,8 @@ public class SecurityConfig {
                 .collect(Collectors.toList());
 
         // Дополнительно маппим бизнес-право на отдельный authority
-        if (roles.contains("ACCOUNTS_WRITE")) {
-            authorities.add(new SimpleGrantedAuthority("accounts.write"));
+        if (roles.contains("CASH_WRITE")) {
+            authorities.add(new SimpleGrantedAuthority("cash.write"));
         }
 
         return authorities;

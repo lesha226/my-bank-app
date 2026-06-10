@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.mybankfront.client.AccountsClient;
 import ru.yandex.practicum.mybankfront.client.CashClient;
 import ru.yandex.practicum.mybankfront.client.TransferClient;
-import ru.yandex.practicum.mybankfront.client.dto.TransferClientResponse;
+import ru.yandex.practicum.mybankfront.client.dto.ServiceResponse;
 import ru.yandex.practicum.mybankfront.controller.dto.*;
 import ru.yandex.practicum.mybankfront.dto.AccountFullDataDto;
 
@@ -64,9 +64,9 @@ public class MainService {
         System.out.println("MainService.editCash user=" + user.getName() + ", params=" + params);
 
         try {
-            cashClient.action(user.getName(), params);
+            ServiceResponse response = cashClient.action(user.getName(), params);
 
-            return doCompleteResult();
+            return new ExecutionStatusResponse(noErrors, response.info());
         } catch (Exception e) {
             return doErrorResult(e.getMessage());
         }
@@ -79,7 +79,7 @@ public class MainService {
         System.out.println("MainService.transfer user=" + user.getName() + ", params=" + params);
 
         try {
-            TransferClientResponse response = transferClient.transfer(user.getName(), params);
+            ServiceResponse response = transferClient.transfer(user.getName(), params);
 
             return new ExecutionStatusResponse(noErrors, response.info());
         } catch (Exception e) {

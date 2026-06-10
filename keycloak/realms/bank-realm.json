@@ -24,6 +24,12 @@
         "clientRole": false
       },
       {
+        "name": "CASH_WRITE",
+        "description": "Permission to perform cash operations",
+        "composite": false,
+        "clientRole": false
+      },
+      {
         "name": "SERVICE",
         "description": "Generic service role for microservices",
         "composite": false,
@@ -80,6 +86,17 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "cash-service",
+      "name": "cash Service",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "cash-service-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
     }
   ],
 
@@ -100,13 +117,23 @@
       ],
       "realmRoles": [
         "USER",
-        "TRANSFER_WRITE"
+        "TRANSFER_WRITE",
+        "CASH_WRITE"
       ]
     },
     {
       "username": "service-account-transfer-service",
       "enabled": true,
       "serviceAccountClientId": "transfer-service",
+      "realmRoles": [
+        "SERVICE",
+        "ACCOUNTS_WRITE"
+      ]
+    },
+    {
+      "username": "service-account-cash-service",
+      "enabled": true,
+      "serviceAccountClientId": "cash-service",
       "realmRoles": [
         "SERVICE",
         "ACCOUNTS_WRITE"

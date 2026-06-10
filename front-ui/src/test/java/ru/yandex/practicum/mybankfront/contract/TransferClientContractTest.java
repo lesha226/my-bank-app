@@ -1,7 +1,6 @@
 package ru.yandex.practicum.mybankfront.contract;
 
 import org.apache.logging.log4j.util.Strings;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,12 +8,9 @@ import org.springframework.cloud.contract.stubrunner.spring.AutoConfigureStubRun
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import ru.yandex.practicum.mybankfront.client.CashClient;
 import ru.yandex.practicum.mybankfront.client.TransferClient;
-import ru.yandex.practicum.mybankfront.client.dto.TransferClientResponse;
+import ru.yandex.practicum.mybankfront.client.dto.ServiceResponse;
 import ru.yandex.practicum.mybankfront.config.ClientTestConfig;
-import ru.yandex.practicum.mybankfront.controller.dto.CashAction;
-import ru.yandex.practicum.mybankfront.controller.dto.EditCashRequest;
 import ru.yandex.practicum.mybankfront.controller.dto.TransferRequest;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -35,7 +31,7 @@ public class TransferClientContractTest {
     @Test
     void transfer() {
         TransferRequest request = new TransferRequest(10, "test-user2");
-        TransferClientResponse response = transferClient.transfer("test-user", request);
+        ServiceResponse response = transferClient.transfer("test-user", request);
 
         assertNotNull(response);
         assertFalse(Strings.isBlank(response.info()));

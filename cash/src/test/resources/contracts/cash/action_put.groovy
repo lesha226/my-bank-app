@@ -4,7 +4,7 @@ import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
     description 'Put cash to account'
-    name 'shouldReturnOkWhenPut123'
+    name "action_put"
 
     request {
         method POST()
@@ -24,7 +24,13 @@ Contract.make {
     }
 
     response {
-        status NO_CONTENT()
+        status OK()
+        headers {
+            contentType(applicationJson())
+        }
+        body(
+                info: 'message'
+        )
     }
 
 }

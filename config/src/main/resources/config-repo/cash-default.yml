@@ -8,3 +8,16 @@ spring:
           token-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/token
           user-info-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/userinfo
           jwk-set-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/certs
+
+      client:
+        registration:
+          cash-service:
+            provider: keycloak
+            client-id: cash-service
+            client-secret: cash-service-secret
+            authorization-grant-type: client_credentials
+            #scope: openid,profile,SERVICE,ACCOUNTS_WRITE
+        provider:
+          keycloak:
+            issuer-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}
+            user-name-attribute: preferred_username

@@ -2,20 +2,20 @@ package ru.yandex.practicum.mybank.service.cash.contract;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.mybank.service.cash.config.AccountsClientTestConfig;
 import ru.yandex.practicum.mybank.service.cash.config.JwtTestConfig;
+import ru.yandex.practicum.mybank.service.cash.dto.AccountsResponse;
 import ru.yandex.practicum.mybank.service.cash.service.CashService;
 
-import java.time.LocalDate;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -25,7 +25,8 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("contract-test")
-@Import(JwtTestConfig.class)
+@Import({JwtTestConfig.class, AccountsClientTestConfig.class})
+@TestPropertySource(properties = {"spring.cloud.config.enabled=false"})
 public class BaseContractTest {
 
     @Autowired
@@ -38,9 +39,12 @@ public class BaseContractTest {
     public void setup() {
         RestAssuredMockMvc.mockMvc(mockMvc);
 
-        doNothing().when(cashService).action(eq("test-user"), any(), any());
+        AccountsResponse response = new AccountsResponse("message");
+        when(cashService.action(eq("test-user"), any())).thenReturn(response);
 
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with login: non-existent-user"))
-                .when(cashService).action(eq("non-existent-user"), any(), any());
+    }
+
+    @Test
+    void contextLoads() {
     }
 }
