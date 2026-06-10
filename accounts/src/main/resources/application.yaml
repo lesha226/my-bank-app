@@ -8,11 +8,6 @@ spring:
       discovery:
         enabled: true
         serviceId: spring-cloud-config-server
-  datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/my_bank?currentSchema=accounts_schema}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:password}
-    driver-class-name: org.postgresql.Driver
 
 server:
   port: 8085

@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @Profile("!contract-test")
-public class WebClientBuilderConfig {
+public class ServiceClientBuilderConfig {
 
     /**
      * Настраиваем OAuth2AuthorizedClientManager —
@@ -82,7 +82,7 @@ public class WebClientBuilderConfig {
 
     @Bean
     @LoadBalanced
-    public WebClient.Builder accountsWebClientBuilder(
+    public WebClient.Builder serviceClientBuilder(
             OAuth2AuthorizedClientManager authorizedClientManager/*,
             @Value("${bank.service.accounts.base-url}") String accountsServiceBaseUrl*/
     ) {

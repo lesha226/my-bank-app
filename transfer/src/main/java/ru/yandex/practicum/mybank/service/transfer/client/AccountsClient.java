@@ -15,10 +15,10 @@ public class AccountsClient {
 
     public AccountsClient(
             @Value("${bank.service.accounts.base-url}") String baseUrl,
-            WebClient.Builder webClientBuilder
+            WebClient.Builder serviceClientBuilder
     ) {
         base_url = baseUrl;
-        this.webClient = webClientBuilder.baseUrl(baseUrl).build();
+        this.webClient = serviceClientBuilder.baseUrl(baseUrl).build();
     }
 
     public TransferResponse transfer(AccountsTransferRequest request) {

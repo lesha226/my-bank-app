@@ -6,14 +6,20 @@ import ru.yandex.practicum.mybank.service.transfer.client.AccountsClient;
 import ru.yandex.practicum.mybank.service.transfer.client.dto.AccountsTransferRequest;
 import ru.yandex.practicum.mybank.service.transfer.model.TransferResponse;
 import ru.yandex.practicum.mybank.service.transfer.model.TransferRequest;
+import ru.yandex.practicum.mybank.service.transfer.outbox.Outbox;
+import ru.yandex.practicum.mybank.service.transfer.outbox.OutboxService;
+
+import java.time.LocalDateTime;
 
 @Service
 public class TransferService {
 
     private final AccountsClient accountsClient;
+    private final OutboxService outboxService;
 
-    public TransferService(AccountsClient accountsClient) {
+    public TransferService(AccountsClient accountsClient, OutboxService outboxService) {
         this.accountsClient = accountsClient;
+        this.outboxService = outboxService;
     }
 
     public TransferResponse transfer(String login, TransferRequest request) {
@@ -27,8 +33,25 @@ public class TransferService {
 
         TransferResponse response = accountsClient.transfer(AccountsTransferRequest);
 
+        asyncNotify(login, request, response);
+
         System.out.println("TransferService.transfer request=" + request);
         return response;
     }
+
+    private void asyncNotify(String login, TransferRequest request, TransferResponse response) {
+        System.out.println("TransferService.asyncNotify: login=" + login + ", request=" + request + ", response=" + response);
+        try {
+            TransferOutboxBody transferOutboxBody = new TransferOutboxBody(request, response);
+            String body = transferOutboxBody.toString();//objectMapper.writeValueAsString(cashActionBody); // TODO : switch to objectMapper
+            Outbox outbox = new Outbox(null, "transfer.transfer", login, LocalDateTime.now(), body);
+
+            outboxService.asyncNotify(outbox);
+        } catch (Exception e) {
+            System.out.println("ERROR TransferService.asyncNotify: " + e.getMessage());
+        }
+    }
+
+    private static record TransferOutboxBody(TransferRequest request, TransferResponse response) {};
 
 }

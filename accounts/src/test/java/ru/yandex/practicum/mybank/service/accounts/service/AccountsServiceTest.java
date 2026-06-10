@@ -11,6 +11,7 @@ import ru.yandex.practicum.mybank.service.accounts.dto.AccountDto;
 import ru.yandex.practicum.mybank.service.accounts.dto.AccountFullDataDto;
 import ru.yandex.practicum.mybank.service.accounts.dto.UpdateAccountRequest;
 import ru.yandex.practicum.mybank.service.accounts.model.Account;
+import ru.yandex.practicum.mybank.service.accounts.outbox.OutboxService;
 import ru.yandex.practicum.mybank.service.accounts.repository.AccountsRepository;
 import ru.yandex.practicum.mybank.service.accounts.service.mapper.AccountMapper;
 
@@ -31,6 +32,9 @@ class AccountsServiceTest {
 
     @Mock
     AccountsRepository accountsRepository;
+
+    @Mock
+    OutboxService outboxService;
 
     private final static AccountFullDataDto dto = new AccountFullDataDto(
             "user",

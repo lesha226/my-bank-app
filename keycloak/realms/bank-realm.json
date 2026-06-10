@@ -30,6 +30,12 @@
         "clientRole": false
       },
       {
+        "name": "NOTIFICATION_WRITE",
+        "description": "Permission to perform notification operations",
+        "composite": false,
+        "clientRole": false
+      },
+      {
         "name": "SERVICE",
         "description": "Generic service role for microservices",
         "composite": false,
@@ -89,10 +95,32 @@
     },
     {
       "clientId": "cash-service",
-      "name": "cash Service",
+      "name": "Cash Service",
       "protocol": "openid-connect",
       "publicClient": false,
       "secret": "cash-service-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "notification-service",
+      "name": "Notification Service",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "notification-service-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "accounts-service",
+      "name": "accounts Service",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "accounts-service-secret",
       "standardFlowEnabled": false,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
@@ -117,6 +145,7 @@
       ],
       "realmRoles": [
         "USER",
+        "ACCOUNTS_WRITE",
         "TRANSFER_WRITE",
         "CASH_WRITE"
       ]
@@ -127,7 +156,8 @@
       "serviceAccountClientId": "transfer-service",
       "realmRoles": [
         "SERVICE",
-        "ACCOUNTS_WRITE"
+        "ACCOUNTS_WRITE",
+        "NOTIFICATION_WRITE"
       ]
     },
     {
@@ -136,7 +166,17 @@
       "serviceAccountClientId": "cash-service",
       "realmRoles": [
         "SERVICE",
-        "ACCOUNTS_WRITE"
+        "ACCOUNTS_WRITE",
+        "NOTIFICATION_WRITE"
+      ]
+    },
+    {
+      "username": "service-notification-account-service",
+      "enabled": true,
+      "serviceAccountClientId": "accounts-service",
+      "realmRoles": [
+        "SERVICE",
+        "NOTIFICATION_WRITE"
       ]
     }
   ]

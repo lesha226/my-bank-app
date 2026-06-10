@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.yandex.practicum.mybank.service.transfer.config.ServiceClientBuilderTestConfig;
 import ru.yandex.practicum.mybank.service.transfer.model.TransferResponse;
 import ru.yandex.practicum.mybank.service.transfer.config.JwtTestConfig;
 import ru.yandex.practicum.mybank.service.transfer.model.TransferRequest;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("contract-test")
-@Import(JwtTestConfig.class)
+@Import({JwtTestConfig.class, ServiceClientBuilderTestConfig.class})
 @TestPropertySource(properties = {"spring.cloud.config.enabled=false"})
 public class BaseContractTest {
 

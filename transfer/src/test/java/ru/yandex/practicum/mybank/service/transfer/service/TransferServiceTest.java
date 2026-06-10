@@ -10,6 +10,7 @@ import ru.yandex.practicum.mybank.service.transfer.client.AccountsClient;
 import ru.yandex.practicum.mybank.service.transfer.client.dto.AccountsTransferRequest;
 import ru.yandex.practicum.mybank.service.transfer.model.TransferResponse;
 import ru.yandex.practicum.mybank.service.transfer.model.TransferRequest;
+import ru.yandex.practicum.mybank.service.transfer.outbox.OutboxService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,6 +24,9 @@ class TransferServiceTest {
 
     @Mock
     AccountsClient accountsClient;
+
+    @Mock
+    OutboxService outboxService;
 
     @BeforeEach
     void setUp() {

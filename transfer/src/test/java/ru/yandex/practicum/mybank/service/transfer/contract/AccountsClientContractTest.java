@@ -11,8 +11,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import ru.yandex.practicum.mybank.service.transfer.client.AccountsClient;
 import ru.yandex.practicum.mybank.service.transfer.client.dto.AccountsTransferRequest;
+import ru.yandex.practicum.mybank.service.transfer.config.JwtTestConfig;
 import ru.yandex.practicum.mybank.service.transfer.model.TransferResponse;
-import ru.yandex.practicum.mybank.service.transfer.config.WebClientBuilderTestConfig;
+import ru.yandex.practicum.mybank.service.transfer.config.ServiceClientBuilderTestConfig;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         ids = "ru.yandex.practicum.mybank.service:accounts:0.0.1-SNAPSHOT:stubs:8085",
         stubsMode = StubRunnerProperties.StubsMode.LOCAL
 )
-@Import(WebClientBuilderTestConfig.class)
+@Import({JwtTestConfig.class, ServiceClientBuilderTestConfig.class})
 @TestPropertySource(properties = {"spring.cloud.config.enabled=false"})
 public class AccountsClientContractTest {
 

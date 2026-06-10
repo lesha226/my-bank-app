@@ -13,9 +13,9 @@ public class AccountsClient {
     private final String baseUrl;
     private final WebClient webClient;
 
-    public AccountsClient(@Value("${bank.service.accounts.base-url}") String baseUrl, WebClient.Builder accountsWebClientBuilder) {
+    public AccountsClient(@Value("${bank.service.accounts.base-url}") String baseUrl, WebClient.Builder serviceClientBuilder) {
         this.baseUrl = baseUrl;
-        this.webClient = accountsWebClientBuilder.baseUrl(baseUrl).build();
+        this.webClient = serviceClientBuilder.baseUrl(baseUrl).build();
     }
 
     public AccountsResponse deposit(AccountsDepositRequest request) {

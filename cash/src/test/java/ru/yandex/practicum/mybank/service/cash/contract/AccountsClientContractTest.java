@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import ru.yandex.practicum.mybank.service.cash.client.AccountsClient;
-import ru.yandex.practicum.mybank.service.cash.config.AccountsClientTestConfig;
+import ru.yandex.practicum.mybank.service.cash.config.ServiceClientTestConfig;
 import ru.yandex.practicum.mybank.service.cash.config.JwtTestConfig;
 import ru.yandex.practicum.mybank.service.cash.dto.AccountsDepositRequest;
 import ru.yandex.practicum.mybank.service.cash.dto.AccountsResponse;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         ids = "ru.yandex.practicum.mybank.service:accounts:0.0.1-SNAPSHOT:stubs:8085",
         stubsMode = StubRunnerProperties.StubsMode.LOCAL
 )
-@Import({JwtTestConfig.class, AccountsClientTestConfig.class})
+@Import({JwtTestConfig.class, ServiceClientTestConfig.class})
 @TestPropertySource(properties = {"spring.cloud.config.enabled=false"})
 public class AccountsClientContractTest {
 

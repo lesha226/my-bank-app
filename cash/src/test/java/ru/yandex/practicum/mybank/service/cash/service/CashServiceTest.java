@@ -12,6 +12,7 @@ import ru.yandex.practicum.mybank.service.cash.dto.AccountsResponse;
 import ru.yandex.practicum.mybank.service.cash.dto.AccountsWithdrawRequest;
 import ru.yandex.practicum.mybank.service.cash.model.CashAction;
 import ru.yandex.practicum.mybank.service.cash.model.CashActionRequest;
+import ru.yandex.practicum.mybank.service.cash.outbox.OutboxService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -25,6 +26,9 @@ class CashServiceTest {
 
     @Mock
     AccountsClient client;
+
+    @Mock
+    OutboxService outboxService;
 
     @BeforeEach
     void setUp() {

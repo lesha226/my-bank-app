@@ -4,3 +4,5 @@ bank:
   service:
     accounts:
       base-url: http://accounts/api/v1
+    notification:
+      base-url: http://notification/api/v1

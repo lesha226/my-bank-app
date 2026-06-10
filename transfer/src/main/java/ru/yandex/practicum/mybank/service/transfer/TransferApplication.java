@@ -2,8 +2,10 @@ package ru.yandex.practicum.mybank.service.transfer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 public class TransferApplication {
 
 	public static void main(String[] args) {

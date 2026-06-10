@@ -16,7 +16,13 @@ spring:
             client-id: transfer-service
             client-secret: transfer-service-secret
             authorization-grant-type: client_credentials
+            #scope: openid,profile,SERVICE,ACCOUNTS_WRITE
         provider:
           keycloak:
             issuer-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}
             user-name-attribute: preferred_username
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/my_bank}?currentSchema=transfer_schema
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver

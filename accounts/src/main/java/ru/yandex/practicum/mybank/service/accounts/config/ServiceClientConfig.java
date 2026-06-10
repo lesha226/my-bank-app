@@ -1,6 +1,5 @@
-package ru.yandex.practicum.mybank.service.cash.config;
+package ru.yandex.practicum.mybank.service.accounts.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @Profile("!contract-test")
-public class AccountsClientConfig {
+public class ServiceClientConfig {
 
     /**
      * Настраиваем OAuth2AuthorizedClientManager —
@@ -80,7 +79,7 @@ public class AccountsClientConfig {
 
     @Bean
     @LoadBalanced
-    public WebClient.Builder accountsWebClientBuilder(
+    public WebClient.Builder serviceClientBuilder(
             OAuth2AuthorizedClientManager authorizedClientManager/*,
             @Value("${bank.service.accounts.base-url}") String accountsServiceBaseUrl*/
     ) {
@@ -93,7 +92,7 @@ public class AccountsClientConfig {
 
         // Указываем client-id клиента из application.yml:
         // Именно этот клиент будет использоваться для получения токена.
-        oauth2.setDefaultClientRegistrationId("cash-service");
+        oauth2.setDefaultClientRegistrationId("accounts-service");
 
         return WebClient.builder()
                 //.baseUrl(accountsServiceBaseUrl) // базовый URL accounts-service

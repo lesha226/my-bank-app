@@ -2,7 +2,6 @@ package ru.yandex.practicum.mybank.service.accounts.contract;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,15 +13,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.mybank.service.accounts.config.JwtTestConfig;
-import ru.yandex.practicum.mybank.service.accounts.config.MockBalanceServiceConfig;
+import ru.yandex.practicum.mybank.service.accounts.config.ServiceClientTestConfig;
 import ru.yandex.practicum.mybank.service.accounts.dto.*;
 import ru.yandex.practicum.mybank.service.accounts.dto.balance.BalanceResponse;
 import ru.yandex.practicum.mybank.service.accounts.dto.balance.DepositRequest;
 import ru.yandex.practicum.mybank.service.accounts.dto.balance.TransferRequest;
 import ru.yandex.practicum.mybank.service.accounts.dto.balance.WithdrawRequest;
 import ru.yandex.practicum.mybank.service.accounts.exception.LoginNotFoundException;
-import ru.yandex.practicum.mybank.service.accounts.model.Account;
-import ru.yandex.practicum.mybank.service.accounts.repository.AccountsRepository;
 import ru.yandex.practicum.mybank.service.accounts.service.AccountsService;
 import ru.yandex.practicum.mybank.service.accounts.service.BalanceService;
 
@@ -37,7 +34,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("contract-test")
-@Import({JwtTestConfig.class, MockBalanceServiceConfig.class})
+@Import({JwtTestConfig.class, ServiceClientTestConfig.class/*, MockBalanceServiceConfig.class*/})
 @TestPropertySource(properties = {"spring.cloud.config.enabled=false"})
 public class BaseAccountsContractTest {
 
