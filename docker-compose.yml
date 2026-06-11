@@ -1,48 +1,247 @@
 services:
-  front-ui:
-    build: ./front-ui
-    container_name: my-bank-front-ui
-    #restart: on-failure
+
+  db:
+    image: postgres:17
+    container_name: my-bank-db
     environment:
-      SPRING_KEYCLOAK_ISSUER_URI: http://keycloak:8180/realms/bank-realm
+      POSTGRES_DB: my_bank
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
     ports:
-      - "8080:8080"
-    depends_on:
-      keycloak:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 5s
-      timeout: 1s
-      retries: 5
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - my-bank-network
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "${DB_USER:-postgres}", "-d", "my_bank"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0.5
+    image: quay.io/keycloak/keycloak:24.0
     container_name: my-bank-keycloak
     command:
       - start-dev
-      - --http-port=8180
       - --import-realm
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
-      KC_HOSTNAME: localhost
+      KC_FEATURES: scripts
+      KC_HTTP_PORT: 8180
       KC_HEALTH_ENABLED: true
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8180
+      KC_HTTP_ENABLED: true
+      KC_PROXY: edge
+    volumes:
+      - ./keycloak/realms/bank-realm.json:/opt/keycloak/data/import/bank-realm.json
     ports:
       - "8180:8180"
-    volumes:
-      - ./keycloak/realms:/opt/keycloak/data/import
     networks:
-      - my-bank-network
+      - app-network
     healthcheck:
       test: ["CMD-SHELL", "curl --head -fsS http://localhost:8180/health/ready | echo $?"]
       interval: 5s
       timeout: 1s
       retries: 5
-      start_period: 60s
+
+  eureka-server:
+    build: ./eureka
+    container_name: my-bank-eureka
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    networks:
+      - app-network
+
+  config-server:
+    build: ./config
+    container_name: my-bank-config
+    ports:
+      - "8888:8888"
+    environment:
+      BANK_EUREKA_URL: http://eureka-server:8761/eureka
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    networks:
+      - app-network
+
+  gateway-server:
+    build: ./gateway
+    container_name: my-bank-gateway
+    ports:
+      - "8081:8081"
+    environment:
+      BANK_EUREKA_URL: http://eureka-server:8761/eureka
+      BANK_CONFIG_URL: http://config-server:8888
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    networks:
+      - app-network
+
+  account-service:
+    build: ./account
+    container_name: my-bank-account
+    ports:
+      - "8085:8085"
+    environment:
+      BANK_EUREKA_URL: http://eureka-server:8761/eureka
+      BANK_CONFIG_URL: http://config-server:8888
+      BANK_KEYCLOAK_REALM_URL: http://keycloak:8180/realms/bank-realm
+      DB_URL: "jdbc:postgresql://db:5432/my_bank"
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8085/actuator/health" ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    networks:
+      - app-network
+
+  cash-service:
+    build: ./cash
+    container_name: my-bank-cash
+    ports:
+      - "8086:8086"
+    environment:
+      BANK_EUREKA_URL: http://eureka-server:8761/eureka
+      BANK_CONFIG_URL: http://config-server:8888
+      BANK_KEYCLOAK_REALM_URL: http://keycloak:8180/realms/bank-realm
+      DB_URL: "jdbc:postgresql://db:5432/my_bank"
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8086/actuator/health" ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    networks:
+      - app-network
+
+  transfer-service:
+    build: ./transfer
+    container_name: my-bank-transfer
+    ports:
+      - "8087:8087"
+    environment:
+      BANK_EUREKA_URL: http://eureka-server:8761/eureka
+      BANK_CONFIG_URL: http://config-server:8888
+      BANK_KEYCLOAK_REALM_URL: http://keycloak:8180/realms/bank-realm
+      DB_URL: "jdbc:postgresql://db:5432/my_bank"
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8087/actuator/health" ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    networks:
+      - app-network
+
+  notification-service:
+    build: ./notification
+    container_name: my-bank-notification
+    ports:
+      - "8088:8088"
+    environment:
+      BANK_EUREKA_URL: http://eureka-server:8761/eureka
+      BANK_CONFIG_URL: http://config-server:8888
+      BANK_KEYCLOAK_REALM_URL: http://keycloak:8180/realms/bank-realm
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8088/actuator/health" ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    networks:
+      - app-network
+
+  front-ui-service:
+    build: ./front-ui
+    container_name: my-bank-front-ui
+    ports:
+      - "8080:8080"
+    environment:
+      BANK_EUREKA_URL: http://eureka-server:8761/eureka
+      BANK_CONFIG_URL: http://config-server:8888
+      BANK_KEYCLOAK_REALM_URL: http://keycloak:8180/realms/bank-realm
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      gateway-server:
+        condition: service_healthy
+      account-service:
+        condition: service_healthy
+      cash-service:
+        condition: service_healthy
+      transfer-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
 
 networks:
-  my-bank-network:
+  app-network:
     driver: bridge

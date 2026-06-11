@@ -67,7 +67,7 @@ public class MainController {
             Model model,
             @AuthenticationPrincipal OidcUser user
     ) {
-        System.out.println("MainController.getAccount user=" + user);
+        System.out.println("MainController.getAccount user=" + getInfo(user));
 
         ExecutionStatusResponse lastResult = getLastResult(model);
 
@@ -108,13 +108,6 @@ public class MainController {
         return "redirect:/account";
     }
 
-    private String getInfo(OidcUser user) {
-        if (user == null) {
-            return "<null>";
-        }
-        return user.getClass().getName() + "[name=" + user.getName() + /*", claims=" + user.getClaims() +*/ "]";
-    }
-
     /**
      * POST /cash.
      * Что нужно сделать:
@@ -132,7 +125,7 @@ public class MainController {
             @AuthenticationPrincipal OidcUser user,
             @Valid EditCashRequest params
     ) {
-        System.out.println("MainController.editCash user=" + user + ", params=" + params);
+        System.out.println("MainController.editCash user=" + getInfo(user) + ", params=" + params);
 
         ExecutionStatusResponse response = mainService.editCash(user, params);
 
@@ -158,7 +151,7 @@ public class MainController {
             @AuthenticationPrincipal OidcUser user,
             @Valid TransferRequest params
     ) {
-        System.out.println("MainController.transfer user=" + user + ", params=" + params);
+        System.out.println("MainController.transfer user=" + getInfo(user) + ", params=" + params);
 
         ExecutionStatusResponse response = mainService.transfer(user, params);
 
@@ -175,5 +168,12 @@ public class MainController {
         String lastInfo = (String) model.getAttribute("info");
 
         return new ExecutionStatusResponse(lastErrors, lastInfo);
+    }
+
+    private String getInfo(OidcUser user) {
+        if (user == null) {
+            return "<null>";
+        }
+        return user.getName();
     }
 }

@@ -1,13 +1,17 @@
+#logging.level.org.springframework.security: DEBUG
+#logging.level.org.springframework.web: DEBUG
+
 server:
   port: 8081
+
 spring:
   application:
     name: gateway
   config:
-    import: configserver:${SPRING_CONFIG_URL:http://127.0.0.1:8888}
+    import: configserver:${BANK_CONFIG_URL:http://127.0.0.1:8888}
 
-logging:
-  level:
-    root: INFO
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web: DEBUG
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${BANK_EUREKA_URL:http://localhost:8761/eureka/}
+

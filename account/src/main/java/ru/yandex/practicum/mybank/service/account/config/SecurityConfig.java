@@ -25,7 +25,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/api/v1/account/user/detail").permitAll() // TODO : delete !!!
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->

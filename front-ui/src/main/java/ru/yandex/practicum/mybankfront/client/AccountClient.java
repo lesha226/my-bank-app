@@ -17,6 +17,7 @@ public class AccountClient {
             @Value("${bank.service.account.base-url}") String base_url,
             WebClient.Builder serviceClientBuilder
     ) {
+        System.out.println("AccountClient.base_url=" + base_url);
         this.base_url = base_url;
         this.webClient = serviceClientBuilder.baseUrl(base_url).build();
     }

@@ -1,28 +1,17 @@
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
-
-spring:
-  application:
-    name: front-ui
-  cloud:
-    config:
-      discovery:
-        enabled: true
-        serviceId: spring-cloud-config-server
-  security:
-    oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: ${FRON_UI_KEYCLOAK_CLIENT_ID:front-ui}
-            client-secret: ${FRON_UI_KEYCLOAK_CLIENT_SECRET:front-ui-secret}
-            authorization-grant-type: authorization_code
-            scope: openid,profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            provider: keycloak
+#logging.level.org.springframework.security: DEBUG
+#logging.level.org.springframework.web: DEBUG
+#logging.level.reactor.netty: DEBUG
 
 server:
   port: 8080
 
+spring:
+  application:
+    name: front-ui
+  config:
+    import: configserver:${BANK_CONFIG_URL:http://127.0.0.1:8888}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${BANK_EUREKA_URL:http://localhost:8761/eureka/}

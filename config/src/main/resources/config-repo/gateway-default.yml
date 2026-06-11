@@ -1,11 +1,5 @@
 spring:
   cloud:
-    #discovery:
-      #client:
-        #simple:
-          #instances:
-            #accounts-service: # Мы не используем Service Discovery, поэтому перечислим хосты самостоятельно
-              #- uri: http://localhost:8085
     gateway:
       server:
         webflux:

@@ -3,8 +3,5 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          #issuer-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}
-          #authorization-uri: http://localhost:8180/realms/bank-realm/protocol/openid-connect/auth
-          token-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/token
-          user-info-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/userinfo
-          jwk-set-uri: ${SPRING_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/certs
+          #issuer-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}
+          jwk-set-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/certs

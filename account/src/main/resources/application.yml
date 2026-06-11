@@ -2,11 +2,11 @@
 #logging.level.org.springframework.web: DEBUG
 
 server:
-  port: 8086
+  port: 8085
 
 spring:
   application:
-    name: cash
+    name: account
   config:
     import: configserver:${BANK_CONFIG_URL:http://127.0.0.1:8888}
 
