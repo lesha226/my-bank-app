@@ -1,5 +1,6 @@
 package ru.yandex.practicum.mybank.service.transfer.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.mybank.service.transfer.client.AccountsClient;
@@ -16,10 +17,13 @@ public class TransferService {
 
     private final AccountsClient accountsClient;
     private final OutboxService outboxService;
+    private final ObjectMapper objectMapper;
 
-    public TransferService(AccountsClient accountsClient, OutboxService outboxService) {
+
+    public TransferService(AccountsClient accountsClient, OutboxService outboxService, ObjectMapper objectMapper) {
         this.accountsClient = accountsClient;
         this.outboxService = outboxService;
+        this.objectMapper = objectMapper;
     }
 
     public TransferResponse transfer(String login, TransferRequest request) {
@@ -43,7 +47,7 @@ public class TransferService {
         System.out.println("TransferService.asyncNotify: login=" + login + ", request=" + request + ", response=" + response);
         try {
             TransferOutboxBody transferOutboxBody = new TransferOutboxBody(request, response);
-            String body = transferOutboxBody.toString();//objectMapper.writeValueAsString(cashActionBody); // TODO : switch to objectMapper
+            String body = objectMapper.writeValueAsString(transferOutboxBody);
             Outbox outbox = new Outbox(null, "transfer.transfer", login, LocalDateTime.now(), body);
 
             outboxService.asyncNotify(outbox);

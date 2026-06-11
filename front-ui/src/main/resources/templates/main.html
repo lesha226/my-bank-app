@@ -22,6 +22,23 @@
                     </h2>
                 </div>
             </div>
+            <div class="col">
+                <div class="hstack gap-3">
+                    <div class="ms-auto gap-2">
+                        <!--<span th:if="${#authentication} != null" sec:authentication="principal.username"></span>-->
+                        <!--<a th:if="${#authentication} != null" href="/logout">Выйти</a>-->
+                        <!--<a th:if="${#authentication} == null" href="/login">Войти</a>-->
+
+
+                        <form th:action="@{/logout}" method="post">
+                            <div th:if="${_csrf != null}">
+                                <input type="hidden" th:name="${_csrf.parameterName}"th:value="${_csrf.token}" />
+                            </div>
+                            <button type="submit" class="btn btn-outline-danger">Выйти</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row p-2">
             <div class="col">
@@ -31,6 +48,9 @@
                     </div>
                     <div class="card-body gap-3">
                         <form method="post" action="/account">
+                            <div th:if="${_csrf != null}">
+                                <input type="hidden" th:name="${_csrf.parameterName}"th:value="${_csrf.token}" />
+                            </div>
                             <div class="form-group">
                                 <h6>
                                     <label for="name">Фамилия Имя</label>
@@ -65,6 +85,9 @@
                     </div>
                     <div class="card-body gap-3">
                         <form method="post" action="/cash">
+                            <div th:if="${_csrf != null}">
+                                <input type="hidden" th:name="${_csrf.parameterName}"th:value="${_csrf.token}" />
+                            </div>
                             <div class="form-group">
                                 <h6>
                                     <label for="cash_value">Сумма, руб.</label>
@@ -88,6 +111,9 @@
                     </div>
                     <div class="card-body gap-3">
                         <form method="post" action="/transfer">
+                            <div th:if="${_csrf != null}">
+                                <input type="hidden" th:name="${_csrf.parameterName}"th:value="${_csrf.token}" />
+                            </div>
                             <div class="form-group">
                                 <h6>
                                     <label for="to_account">Кому</label>

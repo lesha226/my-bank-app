@@ -18,3 +18,15 @@ spring:
                 - Path=/account/** # URI поступающего в Gateway запроса, с которым мэтчится роут
               filters:
                 - RewritePath=/account/?(?<segment>.*), /$\{segment} # Фильтр, который модифицирует запрос к целевому сервису (убирается имя сервиса в начале)
+            - id: cash-route
+              uri: lb://cash
+              predicates:
+                - Path=/cash/**
+              filters:
+                - RewritePath=/cash/?(?<segment>.*), /$\{segment}
+            - id: transfer-route
+              uri: lb://transfer
+              predicates:
+                - Path=/transfer/**
+              filters:
+                - RewritePath=/transfer/?(?<segment>.*), /$\{segment}

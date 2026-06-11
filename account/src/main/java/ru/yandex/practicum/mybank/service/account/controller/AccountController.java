@@ -26,11 +26,11 @@ public class AccountController {
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable("login") String login
     ) {
-        System.out.println("AccountController.getAccount login=" + login + ", jwt=" + getJwtInfo(jwt));
+        System.out.println("AccountController.getAccountDetail login=" + login + ", jwt=" + getJwtInfo(jwt));
 
         AccountDetailResponse response = accountService.getAccountDetail(login);
 
-        System.out.println("AccountController.getAccount response=" + response);
+        System.out.println("AccountController.getAccountDetail response=" + response);
 
         return ResponseEntity.ok(response);
     }
@@ -56,16 +56,18 @@ public class AccountController {
             return "null";
         }
         StringBuilder info = new StringBuilder()
-                .append("[")
+                //.append("[")
                 //.append("getHeaders=" + jwt.getHeaders() + ", ")
                 //.append("getAudience=" + jwt.getAudience() + ", ")
                 //.append("getClaims=" + jwt.getClaims() + ", ")
                 //.append("getId=" + jwt.getId() + ", ")
                 //.append("getSubject=" + jwt.getSubject() + ", ")
                 //.append("getTokenValue=" + jwt.getTokenValue() + ", ")
-                .append("login=" + jwt.getClaimAsString("preferred_username") + ", ")
-                .append("realm_access=" + jwt.getClaimAsMap("realm_access") + ", ")
-                .append("]");
+                //.append("login=" + jwt.getClaimAsString("preferred_username") + ", ")
+                //.append("realm_access=" + jwt.getClaimAsMap("realm_access") + ", ")
+                //.append("]")
+                .append(jwt.getClaimAsMap("realm_access"))
+                ;
 
         //info.append("jwt=" + jwt);
         return info.toString();

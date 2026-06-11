@@ -33,7 +33,7 @@ public class AccountService {
     }
 
     public AccountDetailResponse getAccountDetail(String login) {
-        System.out.println("AccountService.getAccount: login=" + login);
+        //System.out.println("AccountService.getAccount: login=" + login);
         if (login == null || Strings.isBlank(login)) {
             throw new IllegalArgumentException();
         }
@@ -44,7 +44,7 @@ public class AccountService {
         System.out.println("account=" + account + ", accounts" + contacts);
         AccountDetailResponse dto = mapper.toDto(account, contacts);
 
-        System.out.println("AccountService.getAccount: result=" + dto);
+        //System.out.println("AccountService.getAccount: result=" + dto);
         return dto;
     }
 
@@ -73,16 +73,15 @@ public class AccountService {
     }
 
     private void asyncNotify(String login, UpdateAccountRequest request, ServiceResponse response) {
-        System.out.println("AccountService.asyncNotify: login=" + login + ", request=" + request + ", response=" + response);
+        //System.out.println("AccountService.asyncNotify: login=" + login + ", request=" + request + ", response=" + response);
         try {
             UpdateAccountOutboxBody updateAccountOutboxBody = new UpdateAccountOutboxBody(request, response);
-            //String body = getAccountDetailOutboxBody.toString();
-            String body = objectMapper.writeValueAsString(updateAccountOutboxBody);  // TODO : switch to objectMapper
+            String body = objectMapper.writeValueAsString(updateAccountOutboxBody);
             Outbox outbox = new Outbox(null, "account.updateAccount.v1", login, LocalDateTime.now(), body);
 
             outboxService.asyncNotify(outbox);
         } catch (Exception e) {
-            System.out.println("ERROR AccountService.asyncNotify: " + e.getMessage());
+            System.out.println("<===ERROR===> AccountService.asyncNotify: " + e.getMessage());
         }
     }
 

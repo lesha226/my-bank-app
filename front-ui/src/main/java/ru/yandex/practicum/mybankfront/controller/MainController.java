@@ -4,6 +4,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -98,13 +99,20 @@ public class MainController {
             @AuthenticationPrincipal OidcUser user,
             @Valid EditAccountRequest params
     ) {
-        System.out.println("MainController.editAccount user=" + user + ", params=" + params);
+        System.out.println("MainController.editAccount params=" + params + ", user=" + getInfo(user));
 
         ExecutionStatusResponse response = mainService.editAccount(user, params);
 
         redirectAttributes.addFlashAttribute("errors", response.errors());
         redirectAttributes.addFlashAttribute("info", response.info());
         return "redirect:/account";
+    }
+
+    private String getInfo(OidcUser user) {
+        if (user == null) {
+            return "<null>";
+        }
+        return user.getClass().getName() + "[name=" + user.getName() + /*", claims=" + user.getClaims() +*/ "]";
     }
 
     /**

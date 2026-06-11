@@ -1,5 +1,6 @@
 package ru.yandex.practicum.mybank.service.cash.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.mybank.service.cash.client.AccountsClient;
@@ -17,12 +18,14 @@ public class CashService {
 
     private final AccountsClient client;
     private final OutboxService outboxService;
+    private final ObjectMapper objectMapper;
     //private final Consumer<AccountsDepositRequest> depositNotificationSender;
     //private final Consumer<AccountsWithdrawRequest> withdrawNotificationSender;
 
-    public CashService(AccountsClient client, OutboxService outboxService) {
+    public CashService(AccountsClient client, OutboxService outboxService, ObjectMapper objectMapper) {
         this.client = client;
         this.outboxService = outboxService;
+        this.objectMapper = objectMapper;
     }
 
     public AccountsResponse action(String login, CashActionRequest request) {
@@ -57,7 +60,7 @@ public class CashService {
         System.out.println("CashService.asyncNotify: login=" + login + ", request=" + request + ", response=" + response);
         try {
             CashActionOutboxBody cashActionOutboxBody = new CashActionOutboxBody(request, response);
-            String body = cashActionOutboxBody.toString();//objectMapper.writeValueAsString(cashActionBody);  // TODO : switch to objectMapper
+            String body = objectMapper.writeValueAsString(cashActionOutboxBody);
             Outbox outbox = new Outbox(null, "cash.action", login, LocalDateTime.now(), body);
 
             outboxService.asyncNotify(outbox);

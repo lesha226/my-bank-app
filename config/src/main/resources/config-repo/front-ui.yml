@@ -1,14 +1,14 @@
 bank:
   service:
     account:
-      base-url: http://gateway/account/api/v1
       #base-url: http://account/api/v1
+      base-url: http://gateway/account/api/v1
     cash:
-      #base-url: http://gateway/cash/api/v1
-      base-url: http://cash/api/v1
+      #base-url: http://cash/api/v1
+      base-url: http://gateway/cash/api/v1
     transfer:
-      #base-url: http://gateway/transfer/api/v1
-      base-url: http://transfer/api/v1
+      #base-url: http://transfer/api/v1
+      base-url: http://gateway/transfer/api/v1
 
 spring:
   security:

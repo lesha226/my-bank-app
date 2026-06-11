@@ -26,10 +26,7 @@ public class TransferController {
     }
 
     @PostMapping("/{login}")
-    //@PreAuthorize("hasRole('USER') && authentication.name == #login")
-    //@PreAuthorize("hasRole('USER') && authentication.tokenAttributes['preferred_username'] == #login")
-    @PreAuthorize("hasRole('USER')")
-    //@PreAuthorize("hasRole('USER') && hasAuthority('transfer.write')") // TODO : разобраться
+    @PreAuthorize("hasRole('USER') && hasAuthority('transfer.write')")
     public ResponseEntity<TransferResponse> transfer(
             @PathVariable("login") String login,
             @Valid @RequestBody TransferRequest params,
