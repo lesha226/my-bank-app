@@ -10,11 +10,11 @@ spring:
       server:
         webflux:
           routes:
-            - id: accounts-route  # ID роута
+            - id: account-route  # ID роута
               #uri: lb://accounts-service  # URI микросервиса, на который следует перенаправлять запрос
               #uri: http://localhost:8085
-              uri: lb://accounts
+              uri: lb://account
               predicates:
-                - Path=/accounts/** # URI поступающего в Gateway запроса, с которым мэтчится роут
+                - Path=/account/** # URI поступающего в Gateway запроса, с которым мэтчится роут
               filters:
-                - RewritePath=/accounts/?(?<segment>.*), /$\{segment} # Фильтр, который модифицирует запрос к целевому сервису (убирается имя сервиса в начале)
+                - RewritePath=/account/?(?<segment>.*), /$\{segment} # Фильтр, который модифицирует запрос к целевому сервису (убирается имя сервиса в начале)

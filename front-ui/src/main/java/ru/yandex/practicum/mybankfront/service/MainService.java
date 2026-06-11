@@ -3,12 +3,12 @@ package ru.yandex.practicum.mybankfront.service;
 import jakarta.annotation.Nonnull;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.mybankfront.client.AccountsClient;
+import ru.yandex.practicum.mybankfront.client.AccountClient;
 import ru.yandex.practicum.mybankfront.client.CashClient;
 import ru.yandex.practicum.mybankfront.client.TransferClient;
 import ru.yandex.practicum.mybankfront.client.dto.ServiceResponse;
 import ru.yandex.practicum.mybankfront.controller.dto.*;
-import ru.yandex.practicum.mybankfront.dto.AccountFullDataDto;
+import ru.yandex.practicum.mybankfront.client.dto.AccountDetailResponse;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,26 +17,26 @@ import java.util.List;
 @Service
 public class MainService {
 
-    private final AccountsClient accountsClient;
+    private final AccountClient accountsClient;
     private final CashClient cashClient;
     private final TransferClient transferClient;
 
-    public MainService(AccountsClient accountsClient, CashClient cashClient, TransferClient transferClient) {
-        this.accountsClient = accountsClient;
+    public MainService(AccountClient accountClient, CashClient cashClient, TransferClient transferClient) {
+        this.accountsClient = accountClient;
         this.cashClient = cashClient;
         this.transferClient = transferClient;
     }
 
     private final static List<String> noErrors = List.of();
 
-    public @Nonnull AccountResponse getAccount(OidcUser user, ExecutionStatusResponse lastResult) {
+    public @Nonnull AccountResponse getAccountDetail(OidcUser user, ExecutionStatusResponse lastResult) {
         if (user == null || lastResult == null) {
             throw new IllegalArgumentException();
         }
         System.out.println("MainService.getAccount user=" + user.getName());
 
         try {
-            AccountFullDataDto account = accountsClient.getAccount(user.getName());
+            AccountDetailResponse account = accountsClient.getAccountDetail(user.getName());
             return toAccountResponse(account, lastResult);
         } catch (Exception e) {
             return toAccountResponse(e.getMessage(), lastResult);
@@ -50,8 +50,9 @@ public class MainService {
         System.out.println("MainService.editAccount user=" + user.getName() + ", params=" + params);
 
         try {
-            AccountFullDataDto account = accountsClient.updateAccount(user.getName(), params);
-            return doCompleteResult();
+            ServiceResponse response = accountsClient.updateAccount(user.getName(), params);
+
+            return new ExecutionStatusResponse(noErrors, response.info());
         } catch (Exception e) {
             return doErrorResult(e.getMessage());
         }
@@ -102,7 +103,7 @@ public class MainService {
         return new AccountResponse(null, null, null, List.of(), errors, lastResult.info());
     }
 
-    private AccountResponse toAccountResponse(@Nonnull AccountFullDataDto account, @Nonnull ExecutionStatusResponse lastResult) {
+    private AccountResponse toAccountResponse(@Nonnull AccountDetailResponse account, @Nonnull ExecutionStatusResponse lastResult) {
 
         String birthdate = null;
         if (account.birthdate() != null) {

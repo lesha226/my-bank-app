@@ -5,12 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.yandex.practicum.mybankfront.client.AccountsClient;
+import ru.yandex.practicum.mybankfront.client.AccountClient;
 import ru.yandex.practicum.mybankfront.client.CashClient;
 import ru.yandex.practicum.mybankfront.client.TransferClient;
 import ru.yandex.practicum.mybankfront.client.dto.ServiceResponse;
 import ru.yandex.practicum.mybankfront.controller.dto.*;
-import ru.yandex.practicum.mybankfront.dto.AccountFullDataDto;
+import ru.yandex.practicum.mybankfront.client.dto.AccountDetailResponse;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -29,7 +29,7 @@ class MainServiceTest {
     MainService mainService;
 
     @Mock
-    AccountsClient accountsClient;
+    AccountClient accountsClient;
 
     @Mock
     CashClient cashClient;
@@ -41,16 +41,17 @@ class MainServiceTest {
             new AccountDto("login1", "name1"),
             new AccountDto("login2", "name2")
     );
-    private final static AccountFullDataDto ACCOUNT_FULL_DATA_DTO = new AccountFullDataDto(
+    private final static AccountDetailResponse ACCOUNT_FULL_DATA_DTO = new AccountDetailResponse(
             "login", "name", LocalDate.of(2001, 1, 1), 123, ACCOUNTS);
+    private final static ServiceResponse SERVICE_RESPONSE = new ServiceResponse("message");
     private final static ExecutionStatusResponse EXECUTION_STATUS_RESPONSE = new ExecutionStatusResponse(List.of("test error"), "test info");
 
     @Test
-    void getAccountReturnAccount() {
+    void getAccountReturnAccountDetail() {
 
-        when(accountsClient.getAccount(TEST_USER_USERNAME)).thenReturn(ACCOUNT_FULL_DATA_DTO);
+        when(accountsClient.getAccountDetail(TEST_USER_USERNAME)).thenReturn(ACCOUNT_FULL_DATA_DTO);
 
-        AccountResponse response = mainService.getAccount(TEST_USER, EXECUTION_STATUS_RESPONSE);
+        AccountResponse response = mainService.getAccountDetail(TEST_USER, EXECUTION_STATUS_RESPONSE);
 
         assertNotNull(response);
         assertEquals(response.name(), ACCOUNT_FULL_DATA_DTO.name());
@@ -60,19 +61,19 @@ class MainServiceTest {
         assertEquals(response.errors(), EXECUTION_STATUS_RESPONSE.errors());
         assertEquals(response.info(), EXECUTION_STATUS_RESPONSE.info());
 
-        verify(accountsClient).getAccount(TEST_USER_USERNAME);
+        verify(accountsClient).getAccountDetail(TEST_USER_USERNAME);
     }
 
 
     @Test
-    void getAccountReturnError() {
+    void getAccountDetailReturnError() {
         String errorMessage = "errorMessage";
         List<String> errors = new ArrayList<>(EXECUTION_STATUS_RESPONSE.errors());
         errors.add(errorMessage);
 
-        when(accountsClient.getAccount(TEST_USER_USERNAME)).thenThrow(new RuntimeException(errorMessage));
+        when(accountsClient.getAccountDetail(TEST_USER_USERNAME)).thenThrow(new RuntimeException(errorMessage));
 
-        AccountResponse response = mainService.getAccount(TEST_USER, EXECUTION_STATUS_RESPONSE);
+        AccountResponse response = mainService.getAccountDetail(TEST_USER, EXECUTION_STATUS_RESPONSE);
 
         assertNotNull(response);
         assertNull(response.name());
@@ -82,13 +83,13 @@ class MainServiceTest {
         assertEquals(response.errors(), errors);
         assertEquals(response.info(), EXECUTION_STATUS_RESPONSE.info());
 
-        verify(accountsClient).getAccount(TEST_USER_USERNAME);
+        verify(accountsClient).getAccountDetail(TEST_USER_USERNAME);
     }
 
     @Test
     void editAccountReturnInfo() {
         EditAccountRequest request = new EditAccountRequest("name", LocalDate.ofYearDay(2001,1));
-        when(accountsClient.updateAccount(TEST_USER_USERNAME, request)).thenReturn(ACCOUNT_FULL_DATA_DTO);
+        when(accountsClient.updateAccount(TEST_USER_USERNAME, request)).thenReturn(SERVICE_RESPONSE);
 
         ExecutionStatusResponse response = mainService.editAccount(TEST_USER, request);
 

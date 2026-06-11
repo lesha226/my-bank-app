@@ -10,19 +10,19 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import ru.yandex.practicum.mybankfront.client.TransferClient;
 import ru.yandex.practicum.mybankfront.client.dto.ServiceResponse;
-import ru.yandex.practicum.mybankfront.config.ClientTestConfig;
+import ru.yandex.practicum.mybankfront.config.ServiceClientTestConfig;
 import ru.yandex.practicum.mybankfront.controller.dto.TransferRequest;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test-contract")
+@ActiveProfiles("contract-test")
 @AutoConfigureStubRunner(
         ids = "ru.yandex.practicum.mybank.service:transfer:+:stubs:8087",
         stubsMode = StubRunnerProperties.StubsMode.LOCAL
 )
-@Import(ClientTestConfig.class)
+@Import(ServiceClientTestConfig.class)
 public class TransferClientContractTest {
 
     @Autowired

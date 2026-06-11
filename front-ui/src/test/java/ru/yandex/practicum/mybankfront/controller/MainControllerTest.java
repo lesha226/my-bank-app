@@ -45,7 +45,7 @@ class MainControllerTest {
     @Test
     @WithUserDetails(value = TEST_USER_USERNAME)
     void getAccount_validUser_returnOk() throws Exception {
-        when(mainService.getAccount(any(), eq(EXECUTION_RESULT))).thenReturn(ACCOUNT_RESPONSE);
+        when(mainService.getAccountDetail(any(), eq(EXECUTION_RESULT))).thenReturn(ACCOUNT_RESPONSE);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/account")
                                 .flashAttr("errors", EXECUTION_RESULT.errors())
@@ -61,7 +61,7 @@ class MainControllerTest {
                 .andExpect(model().attribute("errors", ACCOUNT_RESPONSE.errors()))
                 .andExpect(model().attribute("info", ACCOUNT_RESPONSE.info()));
 
-        verify(mainService).getAccount(any(), eq(EXECUTION_RESULT));
+        verify(mainService).getAccountDetail(any(), eq(EXECUTION_RESULT));
     }
 
     @Test

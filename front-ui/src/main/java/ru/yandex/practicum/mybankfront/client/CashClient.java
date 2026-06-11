@@ -14,10 +14,10 @@ public class CashClient {
 
     public CashClient(
             @Value("${bank.service.cash.base-url}") String baseUrl,
-            WebClient.Builder webClientBuilder
+            WebClient.Builder serviceClientBuilder
     ) {
         base_url = baseUrl;
-        this.webClient = webClientBuilder.baseUrl(base_url).build();
+        this.webClient = serviceClientBuilder.baseUrl(base_url).build();
     }
 
     public ServiceResponse action(String login, EditCashRequest request) {

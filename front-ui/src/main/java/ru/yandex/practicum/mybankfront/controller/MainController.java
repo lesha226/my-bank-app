@@ -70,7 +70,7 @@ public class MainController {
 
         ExecutionStatusResponse lastResult = getLastResult(model);
 
-        AccountResponse response = mainService.getAccount(user, lastResult);
+        AccountResponse response = mainService.getAccountDetail(user, lastResult);
 
         model.addAttribute("name", response.name());
         model.addAttribute("birthdate", response.birthdate());

@@ -13,7 +13,7 @@ eureka:
 
 bank:
   service:
-    accounts:
+    account:
       #base-url: http://accounts/api/v1
       base-url: http://localhost:8085/api/v1
     cash:
