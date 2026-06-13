@@ -1,0 +1,16 @@
+#logging.level.org.springframework.security: DEBUG
+#logging.level.org.springframework.web: DEBUG
+
+server:
+  port: 8085
+
+spring:
+  application:
+    name: account
+  config:
+    import: configserver:${BANK_CONFIG_URL:http://127.0.0.1:8888}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${BANK_EUREKA_URL:http://localhost:8761/eureka/}

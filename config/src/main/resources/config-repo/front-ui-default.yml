@@ -1,0 +1,33 @@
+bank:
+  service:
+    account:
+      #base-url: http://account/api/v1
+      base-url: http://gateway/account/api/v1
+    cash:
+      #base-url: http://cash/api/v1
+      base-url: http://gateway/cash/api/v1
+    transfer:
+      #base-url: http://transfer/api/v1
+      base-url: http://gateway/transfer/api/v1
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: ${BANK_FRON_UI_KEYCLOAK_CLIENT_ID:front-ui}
+            client-secret: ${BANK_FRON_UI_KEYCLOAK_CLIENT_SECRET:front-ui-secret}
+            authorization-grant-type: authorization_code
+            scope: openid,profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            # issuer-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}
+            authorization-uri: http://localhost:8180/realms/bank-realm/protocol/openid-connect/auth
+            token-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/token
+            user-info-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/userinfo
+            jwk-set-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/certs
+            logout-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/logout
+            user-name-attribute: preferred_username

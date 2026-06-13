@@ -1,0 +1,33 @@
+bank:
+  service:
+    accounts:
+      base-url: http://localhost:8085/api/v1
+    notification:
+      base-url: http://localhost:8088/api/v1
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          enabled: false
+      client:
+        enabled: false
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_UPPER=FALSE
+    username: sa
+    password:
+  scheduling:
+    enabled: false
+
+eureka:
+  client:
+    enabled: false

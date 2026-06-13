@@ -1,0 +1,12 @@
+bank:
+  gateway:
+    base-url: http://gateway
+  service:
+    accounts:
+      base-url: http://account/api/v1
+    cash:
+      base-url: http://cash/api/v1
+    transfer:
+      base-url: http://transfer/api/v1
+    notification:
+      base-url: http://notification/api/v1

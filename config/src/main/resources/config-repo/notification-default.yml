@@ -1,0 +1,7 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #issuer-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}
+          jwk-set-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/certs

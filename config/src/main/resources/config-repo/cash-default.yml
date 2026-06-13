@@ -1,0 +1,28 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #issuer-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}
+          jwk-set-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/certs
+      client:
+        registration:
+          cash-service:
+            provider: keycloak
+            client-id: ${BANK_CASH_KEYCLOAK_ID:cash-service}
+            client-secret: ${BANK_CASH_KEYCLOAK_SECRET:cash-service-secret}
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            #issuer-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}
+            authorization-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/auth
+            token-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/token
+            user-info-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/userinfo
+            jwk-set-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/certs
+            logout-uri: ${BANK_KEYCLOAK_REALM_URL:http://localhost:8180/realms/bank-realm}/protocol/openid-connect/logout
+            user-name-attribute: preferred_username
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/my_bank}?currentSchema=cash_schema
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
